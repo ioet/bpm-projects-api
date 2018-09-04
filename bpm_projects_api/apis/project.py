@@ -1,22 +1,16 @@
-from flask import Flask
-from flask_restplus import Api, fields, Resource
-from werkzeug.contrib.fixers import ProxyFix
+from flask_restplus import fields, Resource, Namespace, Model
 
-app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app)
-api = Api(app, version='0.0.1',
-          title='BPM API',
-          description='API for BPM Projects')
+# Project namespace
+ns = Namespace('projects', description='Operations for projects of the BPM')
 
-ns = api.namespace('projects', description='Project operations')
-
-property = api.model('Property', {
+# Project property
+property = ns.model('Property of the project', {
     'id': fields.String,
     'content': fields.String
 })
 
-# Project model to marshall and unmarshall responses and requests
-project = api.model('Project', {
+# Project model for the API
+project = ns.model('Project', {
     'guid': fields.Integer(readOnly=True, title='Identifier', description='The project generated unique identifier'),
     'short_name': fields.String(required=True, title='Short name', description='The task details'),
     'comments': fields.String(title='Comments', description='Comments about the project'),
@@ -34,7 +28,7 @@ class ProjectDAO(object):
         for project in self.projects:
             if project['guid'] == id:
                 return project
-        api.abort(404, "The project {} doesn't exist".format(id))
+        ns.abort(404, "The project {} doesn't exist".format(id))
 
     def create(self, project):
         project['guid'] = self.counter = self.counter + 1
@@ -69,7 +63,7 @@ class Projects(Resource):
     @ns.marshal_with(project, code=201)
     def post(self):
         """Create a project"""
-        return dao.create(api.payload), 201
+        return dao.create(ns.payload), 201
 
 
 @ns.route('/<int:guid>')
@@ -95,8 +89,4 @@ class Project(Resource):
     @ns.marshal_with(project)
     def put(self, guid):
         """Update a project given its identifier"""
-        return dao.update(guid, api.payload)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        return dao.update(guid, ns.payload)
