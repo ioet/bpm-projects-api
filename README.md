@@ -49,4 +49,4 @@ The use of an IDE is highly recommended, namely PyCharm.
 
 ## License
 
-IOET Inc. all rights reserved.
+Copyright 2018 ioet Inc. All Rights Reserved.
