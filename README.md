@@ -51,6 +51,9 @@ If you are an IDE like PyCharm the process is way easier because they support co
 
 The use of an IDE is highly recommended, namely PyCharm.
 
+### Notes
+Have in consideration that the token will expire each minute.
+
 ## Built with
 - [Python version 3](https://www.python.org/download/releases/3.0/) as backend programming language
 - [Flask](http://flask.pocoo.org/) as backend framework

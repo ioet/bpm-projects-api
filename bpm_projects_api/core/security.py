@@ -65,7 +65,7 @@ class TokenPolicies(object):
         """
 
         def check_if_user_is_administrator(data):
-            if data.get('admin', False) is not True:
+            if data.get('role', 'user') != 'admin':
                 raise PolicyError("Admin user is required")
 
         return token_required(f, validate_function=check_if_user_is_administrator)
@@ -77,11 +77,12 @@ def login():
 
     if auth and auth.password == 'secret':
         # Generates a JWToken
-        expiration_time = datetime.utcnow() + timedelta(seconds=20)
+        expiration_time = datetime.utcnow() + timedelta(seconds=60)
         token = jwt.encode({
-            'user': auth.username,
-            'exp': expiration_time,
-            'admin': True
+            'iss': "ioet.com",
+            'sub': auth.username,
+            'role': "admin",
+            'exp': expiration_time
         }, get_secret_key())
         return jsonify({'token': token.decode('UTF-8')})
 

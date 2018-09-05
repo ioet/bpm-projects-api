@@ -1,7 +1,7 @@
 from flask_restplus import fields, Resource, Namespace
 
 # Project namespace
-from bpm_projects_api.core.security import token_required, TokenPolicies, token_policies
+from bpm_projects_api.core.security import token_required, token_policies
 
 ns = Namespace('projects', description='Operations for projects of the BPM')
 
