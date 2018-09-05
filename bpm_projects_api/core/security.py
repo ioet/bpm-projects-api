@@ -26,7 +26,11 @@ def get_secret_key():
     return app.config['SECRET_KEY']
 
 
-def token_required(f):
+class PolicyError(Exception):
+    pass
+
+
+def token_required(f, validate_function=None):
     @wraps(f)
     def validate_token(*args, **kwargs):
         token = request.headers.get('token', None)
@@ -35,14 +39,36 @@ def token_required(f):
 
         try:
             data = jwt.decode(token, get_secret_key())
+            if validate_function is not None:
+                validate_function(data)
         except DecodeError:
-            return abort(message='Then token has an invalid format', code=401)
+            return abort(message='Malformed token', code=401)
         except ExpiredSignatureError:
             return abort(message='Expired token', code=401)
+        except PolicyError as error:
+            return abort(message=error, code=401)
 
         return f(*args, **kwargs)
 
     return validate_token
+
+
+class TokenPolicies(object):
+    """
+    Security policies based on the Token
+    """
+
+    @staticmethod
+    def administrator_required(f):
+        """
+        Is the user an administrator
+        """
+
+        def check_if_user_is_administrator(data):
+            if data.get('admin', False) is not True:
+                raise PolicyError("Admin user is required")
+
+        return token_required(f, validate_function=check_if_user_is_administrator)
 
 
 @ns.route('/login')
@@ -62,3 +88,6 @@ def login():
     return make_response('Could not verify!', 401, {
         'WWW-Authenticate': 'Basic realm="Login required"'
     })
+
+
+token_policies = TokenPolicies

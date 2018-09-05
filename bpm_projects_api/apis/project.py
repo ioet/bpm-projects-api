@@ -1,7 +1,7 @@
 from flask_restplus import fields, Resource, Namespace
 
 # Project namespace
-from bpm_projects_api.core.security import token_required
+from bpm_projects_api.core.security import token_required, TokenPolicies, token_policies
 
 ns = Namespace('projects', description='Operations for projects of the BPM')
 
@@ -58,6 +58,7 @@ class Projects(Resource):
 
     @ns.doc('list_projects')
     @ns.marshal_list_with(project, code=200)
+    @token_required
     def get(self):
         """List all projects"""
         return dao.projects
@@ -65,7 +66,7 @@ class Projects(Resource):
     @ns.doc('create_project')
     @ns.expect(project)
     @ns.marshal_with(project, code=201)
-    @token_required
+    @token_policies.administrator_required
     def post(self):
         """Create a project"""
         return dao.create(ns.payload), 201
@@ -86,7 +87,7 @@ class Project(Resource):
 
     @ns.doc('delete_project')
     @ns.response(204, 'Project deleted')
-    @token_required
+    @token_policies.administrator_required
     def delete(self, uid):
         """Delete a project given its identifier"""
         dao.delete(uid)
@@ -95,7 +96,7 @@ class Project(Resource):
     @ns.doc('put_project')
     @ns.expect(project)
     @ns.marshal_with(project)
-    @token_required
+    @token_policies.administrator_required
     def put(self, uid):
         """Update a project given its identifier"""
         return dao.update(uid, ns.payload)
