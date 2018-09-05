@@ -36,6 +36,7 @@ export FLASK_ENV=development
 
 * `source run.sh` for Unix based OS
 * `start run.bat` for Windows
+*  `python -m bpm_projects_api` thanks to the `__main__.py`
 
 What it basically does is to set the `FLASK_APP` env variable to the main package and run the app using `Flask`.
 If you are an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
