@@ -32,11 +32,21 @@ to `development`, i.e.
 export FLASK_ENV=development
 ```
 
-1. Run the app from your terminal, i.e.
+1. Run the `run` script corresponding to your OS:
 
-```
-python bpm-projects-api/app.py
-```
+* `source run.sh` for Unix based OS
+* `start run.bat` for Windows
+
+What it basically does is to set the `FLASK_APP` env variable to the main package and run the app using `Flask`.
+If you are an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
+
+1. The main page provides a nice client to test the API and even  for you to provide your JWT: 
+   Click the lock.
+1. To get a token, go to `/login` and authenticate with any username and password `secret` (Just for now of course).
+1. In the main page you will also find a *Models* section for you to check the schema of the managed resources:
+   projects and its metadata.
+1. The swagger schema can be found in `/swagger.json`. You can even generate client code for this API thanks to
+   this file.  
 
 The use of an IDE is highly recommended, namely PyCharm.
 
