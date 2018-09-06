@@ -15,11 +15,21 @@ automatically [pip](https://pip.pypa.io/en/stable/) as well.
 
 ### Install
 
-Thanks to the `requirements.txt` we can install the dependencies using 
+1. Install the dependencies using the `requirements.txt`
 
 ```bash
  pip install -r requirements.txt
 ```
+
+1. Create a `/instance/config.py` to add some important variables for your app to run:
+E.g.
+```python
+FLASK_DEBUG = True                     #I put it in debug mode for development
+SECRET_KEY = "secretkeyfordevelopment" #Hardcoded Secret Key to sign the tokens
+```
+The instance folder is meant not to be versioned because its deployment specific. 
+[See more](http://flask.pocoo.org/docs/0.12/config/#instance-folders).
+
 
 ### Usage
 
