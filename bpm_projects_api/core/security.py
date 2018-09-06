@@ -27,6 +27,9 @@ def get_secret_key():
 
 
 class PolicyError(Exception):
+    """
+    Errors related to lack of auth credentials on a token payload
+    """
     pass
 
 
@@ -55,7 +58,7 @@ def token_required(f, validate_function=None):
 
 class TokenPolicies(object):
     """
-    Security policies based on the Token
+    Security policies checks for tokens
     """
 
     @staticmethod

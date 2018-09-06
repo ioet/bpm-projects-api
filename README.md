@@ -39,7 +39,7 @@ export FLASK_ENV=development
 *  `python -m bpm_projects_api` thanks to the `__main__.py`
 
 What it basically does is to set the `FLASK_APP` env variable to the main package and run the app using `Flask`.
-If you are an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
+If you are using an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
 
 1. The main page provides a nice client to test the API and even  for you to provide your JWT: 
    Click the lock.
@@ -68,8 +68,8 @@ You can generate [Postman][postman_app] collections with the CLI using
 ```
  python cli.py gen_postman_collection
 ```
-it will print it to the console. If you want to write the result in a file please specify its path at the 
-end of the command
+It will print the collection json code to the console. If you want to write the result in a file please specify its path 
+at the end of the command
 
 ```
  python cli.py gen_postman_collection ~/bpm-projects-collection.json
