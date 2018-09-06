@@ -51,8 +51,36 @@ If you are an IDE like PyCharm the process is way easier because they support co
 
 The use of an IDE is highly recommended, namely PyCharm.
 
-### Notes
+#### Notes
 Have in consideration that the token will expire each minute.
+
+### CLI
+
+To show all possible commands to use in the project please execute:
+
+```
+ python cli.py
+```
+
+#### Generate postman collections
+You can generate [Postman][postman_app] collections with the CLI using
+
+```
+ python cli.py gen_postman_collection
+```
+it will print it to the console. If you want to write the result in a file please specify its path at the 
+end of the command
+
+```
+ python cli.py gen_postman_collection ~/bpm-projects-collection.json
+```
+
+Afterwards you can **import** this collection into [Postman][postman_app] and use it instead of the main web app to 
+test this api
+
+<a href="">
+  <img src="img/bpm-projects-postman-collection.png" title="After the postman collection is imported" />
+</a>
 
 ## Built with
 - [Python version 3](https://www.python.org/download/releases/3.0/) as backend programming language
@@ -64,3 +92,5 @@ Have in consideration that the token will expire each minute.
 ## License
 
 Copyright 2018 ioet Inc. All Rights Reserved.
+
+[postman_app]: https://www.getpostman.com/apps
