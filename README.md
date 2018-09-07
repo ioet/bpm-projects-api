@@ -87,11 +87,11 @@ You can generate [Postman][postman_app] collections with the CLI using
 ```
  python cli.py gen_postman_collection
 ```
-It will print the collection json code to the console. If you want to write the result in a file please specify its path 
-at the end of the command
+It will print the collection json code to the console. If you want to write the result in a file use the `-f` or
+`--filename` option
 
 ```
- python cli.py gen_postman_collection ~/bpm-projects-collection.json
+ python cli.py gen_postman_collection -f ~/bpm-projects-collection.json
 ```
 
 Afterwards you can **import** this collection into [Postman][postman_app] and use it instead of the main web app to 

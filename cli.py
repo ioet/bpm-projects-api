@@ -10,20 +10,21 @@ app = create_app()
 manager = Manager(app)
 
 
+
 @manager.command
-def gen_postman_collection(file_path):
+def gen_postman_collection(filename=None):
     """ Generates a postman collection to make tests """
 
     data = api.as_postman(urlvars=False, swagger=True)
 
-    if file_path:
+    if filename:
         try:
-            real_path = os.path.expanduser(file_path)
+            real_path = os.path.expanduser(filename)
             with open(real_path, "w") as f:
                 f.write(json.dumps(data))
                 print("%s was generated successfully" % real_path)
         except OSError as err:
-            print("Error while creating '%s': %s" % file_path, err)
+            print("Error while creating '%s': %s" % filename, err)
     else:
         print(json.dumps(data))
 
