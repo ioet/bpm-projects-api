@@ -11,7 +11,8 @@ def app():
     yield create_app({
         "TESTING": True,
         "SECRET_KEY": "secretkeyfordevelopment",
-        "USER_PASSWORD": "secret"
+        "USER_PASSWORD": "secret",
+        "SERVER_NAME": "localhost"
     })
 
 

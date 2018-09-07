@@ -66,7 +66,7 @@ Have in consideration that the token will expire each minute.
 
 ### Tests
 
-To execute all tests just run:
+To execute all tests just run
 
 ```bash
 pytest -v
