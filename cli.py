@@ -10,11 +10,9 @@ app = create_app()
 manager = Manager(app)
 
 
-
 @manager.command
 def gen_postman_collection(filename=None):
     """ Generates a postman collection to make tests """
-
     data = api.as_postman(urlvars=False, swagger=True)
 
     if filename:

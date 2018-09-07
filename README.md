@@ -71,7 +71,8 @@ To execute all tests just run
 ```bash
 pytest -v
 ```
-Have in count that you can also debug each test (`test_*` files) with the help of an IDE like PyCharm
+The `-v` shows which tests failed or succeeded.
+Have in count that you can also debug each test (`test_*` files) with the help of an IDE like PyCharm.
 
 ### CLI
 

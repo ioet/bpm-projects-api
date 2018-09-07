@@ -2,10 +2,12 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 import jwt
-from flask import request, current_app as app, make_response, Blueprint, json
+from flask import request, current_app as app, make_response, Blueprint, json, session, redirect
 from flask.json import jsonify
 from flask_restplus import abort
 from jwt import DecodeError, ExpiredSignatureError
+
+from tests.utils import url_for
 
 ns = Blueprint('security', __name__)
 
@@ -92,6 +94,13 @@ def login():
     return make_response('Could not verify!', 401, {
         'WWW-Authenticate': 'Basic realm="Login required"'
     })
+
+
+@ns.route('/logout')
+def logout():
+    """End the current user session"""
+    session.clear()
+    return redirect('/')
 
 
 token_policies = TokenPolicies
