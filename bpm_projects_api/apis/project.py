@@ -13,7 +13,7 @@ metadata = ns.model('Metadata', {
 
 # Project model for the API
 project = ns.model('Project', {
-    'uid': fields.Integer(readOnly=True, required=True, title='Identifier',
+    'uid': fields.String(readOnly=True, required=True, title='Identifier',
                           description='The project generated unique identifier'),
     'short_name': fields.String(required=True, title='Short name', description='Unique name in the system'),
     'comments': fields.String(title='Comments', description='Comments about the project'),
@@ -34,7 +34,8 @@ class ProjectDAO(object):
         ns.abort(404, "The project {} doesn't exist".format(id))
 
     def create(self, project):
-        project['uid'] = self.counter = self.counter + 1
+        self.counter += 1
+        project['uid'] = str(self.counter)
         self.projects.append(project)
         return project
 
@@ -72,7 +73,7 @@ class Projects(Resource):
         return dao.create(ns.payload), 201
 
 
-@ns.route('/<int:uid>')
+@ns.route('/<uid>')
 @ns.response(404, 'Project not found')
 @ns.param('uid', 'The project identifier')
 @ns.doc()

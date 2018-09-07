@@ -2,8 +2,18 @@
 Global fixtures
 """
 import pytest
+from flask import json
+
 from bpm_projects_api import create_app
 from tests.utils import url_for, open_with_basic_auth
+
+test_config = {
+    "TESTING": True,
+    "SECRET_KEY": "secretkeyfordevelopment",
+    "USER_PASSWORD": "secret",
+    "SERVER_NAME": "localhost",
+    "TEST_USER": "testuser@domain.com"
+}
 
 
 class User:
@@ -17,7 +27,7 @@ class AuthActions:
         self._app = app
         self._client = client
 
-    def login(self, username, password):
+    def login(self, username=test_config["TEST_USER"], password=test_config["USER_PASSWORD"]):
         login_url = url_for("security.login", self._app)
         return open_with_basic_auth(self._client, login_url, username, password)
 
@@ -28,12 +38,7 @@ class AuthActions:
 @pytest.fixture
 def app():
     """Create and configure a new app instance for each test."""
-    return create_app({
-        "TESTING": True,
-        "SECRET_KEY": "secretkeyfordevelopment",
-        "USER_PASSWORD": "secret",
-        "SERVER_NAME": "localhost"
-    })
+    return create_app(test_config)
 
 
 @pytest.fixture
@@ -45,9 +50,10 @@ def client(app):
 @pytest.fixture
 def user(app):
     """A test user"""
-    return User("testuser@ioet.com", app.config["USER_PASSWORD"])
+    return User(test_config["TEST_USER"], app.config["USER_PASSWORD"])
 
 
+@pytest.fixture
 def api():
     """Projects API"""
     from bpm_projects_api.apis import api
@@ -61,11 +67,11 @@ def secret_token_key(app):
 
 
 @pytest.fixture
-def sample_project():
-    """A project instance used for end-to-end tests"""
-    pass
+def auth(app, client):
+    return AuthActions(app, client)
 
 
 @pytest.fixture
-def auth(app, client):
-    return AuthActions(app, client)
+def auth_token(auth, user):
+    response = auth.login(user.username, user.password)
+    return json.loads(response.data)["token"]

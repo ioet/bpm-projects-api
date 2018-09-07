@@ -7,8 +7,6 @@ from flask.json import jsonify
 from flask_restplus import abort
 from jwt import DecodeError, ExpiredSignatureError
 
-from tests.utils import url_for
-
 ns = Blueprint('security', __name__)
 
 authorizations = {
