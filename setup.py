@@ -8,7 +8,6 @@ setup(
     license='Copyright 2018 ioet Inc. All Rights Reserved.',
     maintainer='BPM Developers',
     description='API for managing projects in the BPM.',
-    long_description=__doc__,
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,

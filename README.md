@@ -64,6 +64,15 @@ The use of an IDE is highly recommended, namely PyCharm.
 #### Notes
 Have in consideration that the token will expire each minute.
 
+### Tests
+
+To execute all tests just run:
+
+```bash
+pytest -v
+```
+Have in count that you can also debug each test (`test_*` files) with the help of an IDE like PyCharm
+
 ### CLI
 
 To show all possible commands to use in the project please execute:

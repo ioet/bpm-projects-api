@@ -3,7 +3,7 @@ asn1crypto==0.24.0
 atomicwrites==1.2.1
 attrs==18.2.0
 beautifulsoup4==4.6.3
--e git+https://github.com/ioet/bpm-projects-api.git@e042524c87ff329e495d993fb6da08204a6fe857#egg=bpm_projects_api
+-e git+https://github.com/ioet/bpm-projects-api.git@e87f5901e3f065d817427af73471036b483d9fad#egg=bpm_projects_api
 cffi==1.11.5
 click==6.7
 cryptography==2.3.1

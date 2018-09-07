@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 import jwt
-from flask import request, current_app as app, make_response, Blueprint
+from flask import request, current_app as app, make_response, Blueprint, json
 from flask.json import jsonify
 from flask_restplus import abort
 from jwt import DecodeError, ExpiredSignatureError
@@ -78,7 +78,7 @@ class TokenPolicies(object):
 def login():
     auth = request.authorization
 
-    if auth and auth.password == 'secret':
+    if auth and auth.password == app.config.get("USER_PASSWORD", ""):
         # Generates a JWToken
         expiration_time = datetime.utcnow() + timedelta(seconds=60)
         token = jwt.encode({
