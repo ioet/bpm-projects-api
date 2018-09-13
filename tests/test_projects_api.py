@@ -98,6 +98,7 @@ def test_delete_existing_project(client, auth_token):
     # Then
     assert 204 == response.status_code
     assert 0 == len(response.data)
+    
     assert len(projects_dao.projects) == 0
 
 
