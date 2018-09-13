@@ -5,7 +5,7 @@ import pytest
 from flask import json
 
 from bpm_projects_api import create_app
-from utils import url_for, open_with_basic_auth
+from tests.utils import url_for, open_with_basic_auth
 
 test_config = {
     "TESTING": True,

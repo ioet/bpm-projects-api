@@ -39,17 +39,3 @@ def create_sample_project(id="0001"):
         ],
         "active": True
     }
-
-def create_sample_inactive_project(id="0001"):
-    return {
-        "uid": 0,
-        "short_name": "Project" + id,
-        "comments": "This is a sample project",
-        "properties_table": [
-            {
-                "id": "author",
-                "content": "BPM Developers"
-            }
-        ],
-        "active": False
-    }
