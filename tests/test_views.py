@@ -1,4 +1,4 @@
-from tests.utils import url_for
+from utils import url_for
 
 
 def test_index_page_is_ok(client):

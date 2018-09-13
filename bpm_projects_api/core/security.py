@@ -66,7 +66,6 @@ class TokenPolicies(object):
         """
         Is the user an administrator
         """
-
         def check_if_user_is_administrator(data):
             if data.get('role', 'user') != 'admin':
                 raise PolicyError("Admin user is required")
