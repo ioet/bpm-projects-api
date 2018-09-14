@@ -106,7 +106,7 @@ def test_find_existing_project(client, auth_token):
     """Searching for an existing string should return 200, Project found"""
 
     data = {
-        'active': False,
+        'search_only_active': False,
         'search_string': 'Project'
     }
 
@@ -125,7 +125,7 @@ def test_find_not_existing_project(client, auth_token):
     """Searching for a non existing string should return 404, Project not found"""
 
     data = {
-        'active': False,
+        'search_only_active': False,
         'search_string': 'asdf'
     }
 
@@ -141,10 +141,10 @@ def test_find_not_existing_project(client, auth_token):
 
 
 def test_find_only_active_projects(client, auth_token):
-    """active property will be set to True, should return 404"""
+    """active property will be set to True, since no active projects exist, it should return 404"""
 
     data = {
-        'active': True,
+        'search_only_active': True,
         'search_string': 'Project'
     }
 
@@ -157,3 +157,22 @@ def test_find_only_active_projects(client, auth_token):
                           json=data, follow_redirects=True)
 
     assert 404 == response.status_code
+
+
+def test_change_project_status(client, auth_token):
+    """changes the active property of a project, returns 200 when successful"""
+
+    data = {
+        'change_active': True,
+        'search_string': 'Project'
+    }
+
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    response = client.put("/projects/change/",
+                          headers={'token': auth_token},
+                          json=data, follow_redirects=True)
+
+    assert 200 == response.status_code
