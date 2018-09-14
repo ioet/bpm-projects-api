@@ -23,6 +23,7 @@ class User:
 
 
 class AuthActions:
+    """Auth actions container in tests"""
     def __init__(self, app, client):
         self._app = app
         self._client = client
@@ -39,7 +40,6 @@ class AuthActions:
 def app():
     """Create and configure a new app instance for each test."""
     return create_app(test_config)
-
 
 @pytest.fixture
 def client(app):
