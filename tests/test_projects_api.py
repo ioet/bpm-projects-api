@@ -1,6 +1,6 @@
 from flask import json
 from bpm_projects_api.apis.project import dao as projects_dao
-from utils import create_sample_project, create_sample_inactive_project
+from tests.utils import create_sample_project, create_sample_inactive_project
 
 
 def test_list_all_projects_should_return_nothing(client, auth_token):
@@ -105,7 +105,7 @@ def test_find_existing_project(client, auth_token):
     """Searching for an existing string should return 200, Project found"""
 
     data = {
-        'active': "False",
+        'active': False,
         'search_string': 'Project'
     }
 
@@ -113,7 +113,7 @@ def test_find_existing_project(client, auth_token):
     client.post("/projects/", headers={'token': auth_token},
                 json=project, follow_redirects=True)
 
-    response = client.put("/projects/search/" + data['search_string'],
+    response = client.put("/projects/search/",
                           headers={'token': auth_token},
                           json=data, follow_redirects=True)
 
@@ -124,7 +124,7 @@ def test_find_not_existing_project(client, auth_token):
     """Searching for a non existing string should return 404, Project not found"""
 
     data = {
-        'active': 'False',
+        'active': False,
         'search_string': 'asdf'
     }
 
@@ -143,7 +143,7 @@ def test_find_only_active_projects(client, auth_token):
     """active property will be set to True, should return 404"""
 
     data = {
-        'active': 'True',
+        'active': True,
         'search_string': 'Project'
     }
 

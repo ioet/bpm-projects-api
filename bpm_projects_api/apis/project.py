@@ -1,6 +1,4 @@
 from flask_restplus import fields, Resource, Namespace
-# from flask import Blueprint, render_template, abort
-
 # Project namespace
 from bpm_projects_api.core.security import token_required, token_policies
 
@@ -57,11 +55,12 @@ class ProjectDAO(object):
         self.projects.remove(project)
 
     def search(self, data):
-        matching_projects = [project for project in dao.projects if (data['search_string'] in str(project['comments']) or
-                                                                     data['search_string'] in str(project['short_name']))]
+        matching_projects = [project for project in dao.projects
+                             if (data['search_string'] in str(project['comments'])
+                                 or data['search_string'] in str(project['short_name']))]
         # if active is true, only display active projects
-        if(len(matching_projects) > 0):
-            if(data['active'] == ('true' or 'TRUE' or 'True')):
+        if len(matching_projects) > 0:
+            if data['active'] == True:
                 for project in matching_projects:
                     if project['active'] == True:
                         pass
@@ -69,14 +68,14 @@ class ProjectDAO(object):
                         matching_projects.remove(project)
 
             # otherwise return all objects that match the search string
-                if(len(matching_projects) > 0):
+                if len(matching_projects) > 0:
                     return matching_projects
                 else:
-                    ns.abort(404, "No matching projects found")
+                    return matching_projects, 404
 
             return matching_projects
         else:
-            ns.abort(404, "No matching projects found")
+            return matching_projects, 404
 
 
     def change_status(self, data):
@@ -162,16 +161,16 @@ class Project(Resource):
 # https://flask-restplus.readthedocs.io/en/0.11.0/example.html and
 # https://www.rithmschool.com/courses/flask-fundamentals/routing-with-flask
 # "<url>/<<data_type>:<variable_name>>
-@ns.route('/search/<data>')
+@ns.route('/search/')
 @ns.response(404, 'Project not found')
 class SearchProject(Resource):
     """To search for projects and change their status"""
 
     @ns.doc('search_project')
     @ns.expect(search_criteria)
-    @ns.response(210, 'Project found')
-    @ns.marshal_with(search_criteria)
-    def put(self, data):
+    # @ns.response(210, 'Project found')
+    @ns.marshal_list_with(project, code=200)
+    def put(self):
         """Fetch projects given a string"""
         return dao.search(ns.payload)
 
