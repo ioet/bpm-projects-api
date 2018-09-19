@@ -1,0 +1,42 @@
+queue:
+  name: Hosted Ubuntu 1604
+steps:
+- task: Docker@1
+  displayName: 'Build BPM Projects API Image'
+  inputs:
+    azureSubscriptionEndpoint: 'Pay-As-You-Go (ca70c44c-ad7a-4333-a22c-07ebc6a69224)'
+
+    azureContainerRegistry: bpmprojectsapi.azurecr.io
+
+    imageName: 'bpmprojectsapi.azurecr.io/bpmprojectsapi:$(Build.BuildId)'
+
+    includeLatestTag: true
+
+
+- task: Docker@1
+  displayName: 'Push BPM Projects API Image'
+  inputs:
+    azureSubscriptionEndpoint: 'Pay-As-You-Go (ca70c44c-ad7a-4333-a22c-07ebc6a69224)'
+
+    azureContainerRegistry: bpmprojectsapi.azurecr.io
+
+    imageName: 'bpmprojectsapi.azurecr.io/bpmprojectsapi:$(Build.BuildId)'
+
+    includeLatestTag: true
+
+
+- task: AzureRmWebAppDeployment@3
+  displayName: 'Deploy Web App for Containers'
+  inputs:
+    azureSubscription: 'Pay-As-You-Go (ca70c44c-ad7a-4333-a22c-07ebc6a69224)'
+
+    appType: applinux
+
+    WebAppName: 'bpm-projects-api'
+
+    DockerNamespace: bpmprojectsapi
+
+    DockerRepository: 'bpmprojectsapi.azurecr.io/bpmprojectsapi:$(Build.BuildId)'
+
+    DockerImageTag: latest
+

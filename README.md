@@ -1,5 +1,6 @@
 BPM Projects API
 ================
+[![Build status](https://dev.azure.com/ioet-bpm/bpm-projects-api/_apis/build/status/bpm-projects-api%20-%20CI)](https://dev.azure.com/ioet-bpm/bpm-projects-api/_build/latest?definitionId=2)
 
 API for BPM Projects
 
