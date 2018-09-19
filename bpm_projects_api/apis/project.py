@@ -21,17 +21,11 @@ project = ns.model('Project', {
 })
 
 # active component to change the status of a project
-search_criteria = ns.model('Search_Criteria', {
-    'search_only_active': fields.Boolean(title='Is active?',
-                                         description='If true, only active projects will be respected'),
+search_criteria = ns.model('SearchCriteria', {
     'search_string': fields.String(title='Keywords',
                                    description='What you want to search for in the comments/the name'),
-})
-
-change_criteria = ns.model('Change_Criteria', {
-    'change_status': fields.Boolean(title='Change status', description='If true, the projects status will be inverted'),
-    'search_string': fields.String(title='Keywords',
-                                   description='What you want to search for in the comments/the name'),
+    'active': fields.Boolean(title='Is active?',
+                             description='true=only active, false=only inactive, none=all'),
 })
 
 
@@ -44,7 +38,7 @@ class ProjectDAO(object):
         for project in self.projects:
             if project['uid'] == id:
                 return project
-        ns.abort(404, "The project {} doesn't exist".format(id))
+        return '', 404
 
     def create(self, project):
         self.counter += 1
@@ -61,46 +55,36 @@ class ProjectDAO(object):
         project = self.get(id)
         self.projects.remove(project)
 
-    def search(self, data):
-        matching_projects = [project for project in dao.projects
-                             if (data['search_string'] in str(project['comments']) or
-                                 data['search_string'] in str(project['short_name']))]
+    def search(self, search_criteria):
+        search_string = None
+        active = None
+
+        if 'search_string' in search_criteria:
+            search_string = search_criteria['search_string']
+        if 'active' in search_criteria:
+            active = search_criteria['active']
+
+        if search_string is None and active is None:
+            return 'No data sent', 404
+
+        if search_string:
+            matching_projects = [project for project in dao.projects
+                                 if (search_string in project['comments'] or
+                                     search_string in project['short_name'])]
+        else:
+            matching_projects = [project for project in dao.projects]
+
+        if active is True or active is False:
+            projects_to_remove = [project for project in matching_projects
+                                  if project['active'] is not active]
+
+            for project in projects_to_remove:
+                matching_projects.remove(project)
 
         if len(matching_projects) > 0:
-            if data['search_only_active'] == True:
-                for project in matching_projects:
-                    if project['search_only_active'] == True:
-                        pass
-                    else:
-                        matching_projects.remove(project)
-
-                if len(matching_projects) > 0:
-                    return matching_projects
-                else:
-                    return 404
-
             return matching_projects
         else:
-            return 404
-
-    def change_status(self, data):
-        matching_projects = [project for project in dao.projects
-                             if (data['search_string'] in str(project['comments']) or
-                                 data['search_string'] in str(project['short_name']))]
-
-        if len(matching_projects) > 0:
-            if data['change_active'] == True:
-                for project in matching_projects:
-                    project['active'] = not project['active']
-
-            for original_project in dao.projects:
-                for project in matching_projects:
-                    if project['uid'] == original_project['uid']:
-                        original_project = project
-
-            return 200
-        else:
-            return 404
+            return '', 404
 
 
 dao = ProjectDAO()
@@ -166,20 +150,6 @@ class SearchProject(Resource):
     @ns.doc('search_project')
     @ns.expect(search_criteria)
     @ns.marshal_list_with(project, code=200)
-    def put(self):
+    def post(self):
         """Fetch projects given a string"""
         return dao.search(ns.payload)
-
-
-@ns.route('/change/')
-@ns.response(404, 'Project not found')
-class ChangeProject(Resource):
-    """To change a projects active status"""
-
-    @ns.doc('change_project_active_prop')
-    @ns.expect(change_criteria)
-    @ns.marshal_list_with(project, code=200)
-    @token_policies.administrator_required
-    def put(self):
-        """Set projects active/inactive"""
-        return dao.change_status(ns.payload)

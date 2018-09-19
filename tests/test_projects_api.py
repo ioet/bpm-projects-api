@@ -19,6 +19,12 @@ def test_post_new_project(client, auth_token):
     project = create_sample_project()
     response = client.post("/projects/", headers={'token': auth_token},
                            json=project, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
     assert 201 == response.status_code
 
     created_project = json.loads(response.data)
@@ -28,7 +34,17 @@ def test_post_new_project(client, auth_token):
 def test_get_all_projects_should_return_a_project(client, auth_token):
     """Check if the project previously created is there"""
 
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
     response = client.get("/projects/", headers={'token': auth_token}, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
     assert 200 == response.status_code
 
     json_data = json.loads(response.data)
@@ -38,10 +54,20 @@ def test_get_all_projects_should_return_a_project(client, auth_token):
 def test_get_valid_project(client, auth_token):
     """If a valid project id is given it should be returned"""
 
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
     last_created_project_id = str(projects_dao.counter)
     response = client.get("/projects/" + last_created_project_id,
                           headers={'token': auth_token},
                           follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
     assert 200 == response.status_code
 
     obtained_project = json.loads(response.data)
@@ -58,6 +84,10 @@ def test_get_invalid_project(client, auth_token):
 
 def test_put_project_properties(client, auth_token):
     """Put should only update given properties"""
+
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
 
     last_created_project_id = str(projects_dao.counter)
     new_name = "Updated project" + last_created_project_id
@@ -76,6 +106,11 @@ def test_put_project_properties(client, auth_token):
                           json=properties_update,
                           headers={'token': auth_token},
                           follow_redirects=True)
+
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
     assert 200 == response.status_code
 
     obtained_project = json.loads(response.data)
@@ -85,6 +120,10 @@ def test_put_project_properties(client, auth_token):
 
 def test_delete_existing_project(client, auth_token):
     """Delete an existing project should return no content"""
+
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
 
     # Given
     assert len(projects_dao.projects) == 1
@@ -102,30 +141,47 @@ def test_delete_existing_project(client, auth_token):
     assert len(projects_dao.projects) == 0
 
 
-def test_find_existing_project(client, auth_token):
-    """Searching for an existing string should return 200, Project found"""
+def test_search_nothing(client, auth_token):
+    """Searching for nothing should return 404"""
 
-    data = {
-        'search_only_active': False,
-        'search_string': 'Project'
+    search_criteria = {
+
+    }
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    assert 404 == response.status_code
+
+
+def test_search_existing_string(client, auth_token):
+    """Searching for an existing string should return 200"""
+
+    search_criteria = {
+        'search_string': 'Pro'
     }
 
     project = create_sample_project()
     client.post("/projects/", headers={'token': auth_token},
                 json=project, follow_redirects=True)
 
-    response = client.put("/projects/search/",
-                          headers={'token': auth_token},
-                          json=data, follow_redirects=True)
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
 
     assert 200 == response.status_code
 
 
-def test_find_not_existing_project(client, auth_token):
-    """Searching for a non existing string should return 404, Project not found"""
+def test_search_not_existing_string(client, auth_token):
+    """Searching for a not existing string should return 404"""
 
-    data = {
-        'search_only_active': False,
+    search_criteria = {
         'search_string': 'asdf'
     }
 
@@ -133,46 +189,164 @@ def test_find_not_existing_project(client, auth_token):
     client.post("/projects/", headers={'token': auth_token},
                 json=project, follow_redirects=True)
 
-    response = client.put("/projects/search/" + data['search_string'],
-                          headers={'token': auth_token},
-                          json=data, follow_redirects=True)
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
 
     assert 404 == response.status_code
 
 
-def test_find_only_active_projects(client, auth_token):
-    """active property will be set to True, since no active projects exist, it should return 404"""
+def test_search_active_existing(client, auth_token):
+    """Searching for an existing active project should return 200"""
 
-    data = {
-        'search_only_active': True,
-        'search_string': 'Project'
-    }
-
-    project = create_sample_inactive_project()
-    client.post("/projects/", headers={'token': auth_token},
-                json=project, follow_redirects=True)
-
-    response = client.put("/projects/search/" + data['search_string'],
-                          headers={'token': auth_token},
-                          json=data, follow_redirects=True)
-
-    assert 404 == response.status_code
-
-
-def test_change_project_status(client, auth_token):
-    """changes the active property of a project, returns 200 when successful"""
-
-    data = {
-        'change_active': True,
-        'search_string': 'Project'
+    search_criteria = {
+        'active': True
     }
 
     project = create_sample_project()
     client.post("/projects/", headers={'token': auth_token},
                 json=project, follow_redirects=True)
 
-    response = client.put("/projects/change/",
-                          headers={'token': auth_token},
-                          json=data, follow_redirects=True)
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
 
     assert 200 == response.status_code
+
+
+def test_search_active_not_existing(client, auth_token):
+    """Searching for a not existing active project should return 404"""
+
+    search_criteria = {
+        'active': True
+    }
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    assert 404 == response.status_code
+
+
+def test_search_inactive_existing(client, auth_token):
+    """Searching for an existing inactive project should return 200"""
+
+    search_criteria = {
+        'active': False
+    }
+
+    project = create_sample_inactive_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
+    assert 200 == response.status_code
+
+
+def test_search_inactive_not_exising(client, auth_token):
+    """Searching for an inactive not existing project should return 404"""
+
+    search_criteria = {
+        'active': False
+    }
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    assert 404 == response.status_code
+
+
+def test_search_string_active_existing(client, auth_token):
+    """Searching with a string for an active, existing project should return 200"""
+
+    search_criteria = {
+        'search_string': 'Pro',
+        'active': True
+    }
+
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
+    assert 200 == response.status_code
+
+
+def test_search_string_active_not_existing(client, auth_token):
+    """Searching with a string for an active, not existing project should return 404"""
+
+    search_criteria = {
+        'search_string': 'Pro',
+        'active': True
+    }
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    assert 404 == response.status_code
+
+def test_search_string_inactive_existing(client, auth_token):
+    """Searching with a string for an inactive, existing project should return 200"""
+
+    search_criteria = {
+        'search_string': 'Pro',
+        'active': False
+    }
+
+    project = create_sample_inactive_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
+    assert 200 == response.status_code
+
+
+def test_search_string_inactive_not_existing(client, auth_token):
+    """Searching with a string for an inactive, not existing project should return 404"""
+
+    search_criteria = {
+        'search_string': 'Pro',
+        'active': False
+    }
+
+    response = client.post("/projects/search/",
+                           headers={'token': auth_token},
+                           json=search_criteria, follow_redirects=True)
+
+    assert 404 == response.status_code
