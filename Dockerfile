@@ -4,16 +4,22 @@ LABEL maintainer="ehernandez@ioet.com"
 RUN apt-get update
 RUN apt-get install -y git
 RUN apt-get install -y python3 python3-dev python3-pip
+RUN apt-get install -y curl
 
-COPY . /app
+# Add requirements.txt before rest of repo for caching
+ADD requirements.txt /app/
+
 WORKDIR /app
-
-ENV FLASK_APP bpm_projects_api
 
 RUN pip3 install -r requirements.txt
 
-EXPOSE 5000
+ADD . /app
 
-ENTRYPOINT [ "python3", "-m" ]
+ENV FLASK_APP bpm_projects_api
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
 
-CMD ["flask", "run"]
+
+EXPOSE 8000
+
+CMD python3 run.py

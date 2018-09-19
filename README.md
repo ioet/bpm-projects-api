@@ -25,8 +25,15 @@ automatically [pip](https://pip.pypa.io/en/stable/) as well.
 E.g.
 ```python
 FLASK_DEBUG = True                     # I put it in debug mode for development
-SECRET_KEY = "secretkeyfordevelopment" # Hardcoded Secret Key to sign tokens
+SECRET_KEY = "secretkeyfordevelopment" # For signing
 ```
+The `SECRET_KEY` will be used for anything related to signing in the application. You can 
+generate one by executing
+
+```bash
+python -c 'import os; print(os.urandom(16))'
+```
+
 The instance folder is meant not to be versioned because its deployment specific. 
 [See more](http://flask.pocoo.org/docs/0.12/config/#instance-folders).
 
