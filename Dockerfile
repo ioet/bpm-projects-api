@@ -22,4 +22,5 @@ ENV LANG C.UTF-8
 
 EXPOSE 8000
 
-CMD python3 run.py
+#Run 4 instances
+CMD ["gunicorn", "-w 4", "-b 0.0.0.0:8000", "run:app"]
