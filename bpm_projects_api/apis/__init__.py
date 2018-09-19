@@ -11,7 +11,8 @@ api = Api(
     title='BPM Projects API',
     version='0.0.1',
     description='API for managing projects on the IOET BPM',
-    authorizations=security.authorizations, security="BPM Token"
+    authorizations=security.authorizations, security="BPM Token",
+    default=project.ns.name, default_label=project.ns.name
 )
 
 api.add_namespace(project.ns)

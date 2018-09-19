@@ -23,8 +23,6 @@ def create_app(config=None):
     from bpm_projects_api.apis import api
     api.init_app(app)
 
-    print("%s is the host" % app.config["SERVER_NAME"])
-
     from bpm_projects_api.core import security
     app.register_blueprint(security.ns)  # Security endpoints
 
