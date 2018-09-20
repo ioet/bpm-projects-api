@@ -15,14 +15,20 @@ automatically [pip](https://pip.pypa.io/en/stable/) as well.
 - A virtual environment, namely [venv](https://docs.python.org/3/library/venv.html).
 
 ### Install
-
+Go to the directory of the project
+1. Install the virtual environment
+    ```bash
+    virtualenv env
+    source env/bin/activate
+    ```
 1. Install the dependencies using the `requirements.txt`
 
-```bash
- pip install -r requirements.txt
-```
+    ```bash
+     pip install -r requirements.txt
+    ```
 
 1. Create an `/instance/config.py` to add some important variables for your app to run:
+
 E.g.
 ```python
 FLASK_DEBUG = True                     # I put it in debug mode for development
@@ -44,17 +50,17 @@ The instance folder is meant not to be versioned because its deployment specific
 Run the project using 
 
 1. For using Flask's development capabilities as the autoloading set this `FLASK_ENV` environment variable
-to `development`, i.e.
-
-```bash
-export FLASK_ENV=development
-```
+    to `development`, i.e.
+    
+    ```bash
+    export FLASK_ENV=development
+    ```
 
 1. Run the `run` script corresponding to your OS:
 
-* `source run.sh` for Unix based OS
-* `start run.bat` for Windows
-*  `python -m bpm_projects_api` thanks to the `__main__.py`
+    * `source run.sh` for Unix based OS
+    * `start run.bat` for Windows
+    *  `python -m bpm_projects_api` thanks to the `__main__.py`
 
 What it basically does is to set the `FLASK_APP` env variable to the main package and run the app using `Flask`.
 If you are using an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
