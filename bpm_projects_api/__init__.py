@@ -3,11 +3,13 @@ import os
 from flask import Flask
 
 
-def create_app(config=None):
+def create_app(config=None, config_object=None):
     """Create and configure an instance of the Flask app."""
     app = Flask(__name__, instance_relative_config=True)
 
-    if config is None:
+    if config_object is not None:
+        app.config.from_object(config_object)
+    elif config is None:
         # ensure the instance folder exists
         try:
             os.makedirs(app.instance_path)
