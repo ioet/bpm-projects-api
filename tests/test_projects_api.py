@@ -268,7 +268,7 @@ def test_search_inactive_not_exising(client, auth_token):
         'active': False
     }
 
-    response = client.post("/projects/search/",
+    response = client.post("/projects/search/{change_status}",
                            headers={'token': auth_token},
                            json=search_criteria, follow_redirects=True)
 
@@ -313,6 +313,7 @@ def test_search_string_active_not_existing(client, auth_token):
 
     assert 404 == response.status_code
 
+
 def test_search_string_inactive_existing(client, auth_token):
     """Searching with a string for an inactive, existing project should return 200"""
 
@@ -348,5 +349,114 @@ def test_search_string_inactive_not_existing(client, auth_token):
     response = client.post("/projects/search/",
                            headers={'token': auth_token},
                            json=search_criteria, follow_redirects=True)
+
+    assert 404 == response.status_code
+
+
+def test_activate_active(client, auth_token):
+    """Activating an active project returns 404"""
+
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+
+    response = client.post("/projects/status/activate/" + last_created_project_id,
+                           headers={'token': auth_token},
+                           follow_redirects=True)
+
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
+    assert 404 == response.status_code
+
+
+def test_activate_inactive(client, auth_token):
+    """Activating an inactive project sets active to True, returns 200"""
+
+    project = create_sample_inactive_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+
+    response = client.post("/projects/status/activate/" + last_created_project_id,
+                           headers={'token': auth_token},
+                           follow_redirects=True)
+
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
+    returned_project = json.loads(response.data)
+    assert returned_project['active'] is True
+    assert 200 == response.status_code
+
+
+def test_deactivating_inactive(client, auth_token):
+    """Deactivating an inactive project returns 404"""
+
+    project = create_sample_inactive_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+
+    response = client.post("/projects/status/deactivate/" + last_created_project_id,
+                           headers={'token': auth_token},
+                           follow_redirects=True)
+
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
+    assert 404 == response.status_code
+
+
+def test_deactivating_active(client, auth_token):
+    """Deactivating an active projects sets active to False, returns 200"""
+
+    project = create_sample_project()
+    client.post("/projects/", headers={'token': auth_token},
+                json=project, follow_redirects=True)
+
+    last_created_project_id = str(projects_dao.counter)
+
+    response = client.post("/projects/status/deactivate/" + last_created_project_id,
+                           headers={'token': auth_token},
+                           follow_redirects=True)
+
+    client.delete("/projects/" + last_created_project_id,
+                  headers={'token': auth_token},
+                  follow_redirects=True)
+
+    returned_project = json.loads(response.data)
+    assert returned_project['active'] is False
+    assert 200 == response.status_code
+
+
+def test_deactivate_not_existing(client, auth_token):
+    """Deactivating a not existing project returns 404"""
+
+    last_created_project_id = str(projects_dao.counter)
+
+    response = client.post("/projects/status/deactivate/" + last_created_project_id,
+                           headers={'token': auth_token},
+                           follow_redirects=True)
+    print(response)
+
+    assert 404 == response.status_code
+
+
+def test_activate_not_existing(client, auth_token):
+    """Activating a not existing project returns 404"""
+
+    last_created_project_id = str(projects_dao.counter)
+
+    response = client.post("/projects/status/activate/" + last_created_project_id,
+                           headers={'token': auth_token},
+                           follow_redirects=True)
 
     assert 404 == response.status_code

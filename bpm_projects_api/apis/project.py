@@ -20,8 +20,7 @@ project = ns.model('Project', {
     'active': fields.Boolean(title='Is active?', description='Whether the project is active or not'),
 })
 
-# active component to change the status of a project
-search_criteria = ns.model('SearchCriteria', {
+search_model = ns.model('SearchCriteria', {
     'search_string': fields.String(title='Keywords',
                                    description='What you want to search for in the comments/the name'),
     'active': fields.Boolean(title='Is active?',
@@ -56,6 +55,35 @@ class ProjectDAO(object):
         self.projects.remove(project)
 
     def search(self, search_criteria):
+        matching_projects = self.select_matching_projects(search_criteria)
+
+        if len(matching_projects) > 0:
+            return matching_projects
+        else:
+            return '', 404
+
+    def deactivate(self, project_id):
+        temp_project = self.get(project_id)
+        if temp_project == ('', 404):
+            return '', 404
+        elif temp_project['active'] is True:
+            temp_project['active'] = False
+            return temp_project
+        else:
+            return '', 404
+
+    def activate(self, project_id):
+        temp_project = self.get(project_id)
+        if temp_project == ('', 404):
+            return '', 404
+        elif temp_project['active'] is False:
+            temp_project['active'] = True
+            return temp_project
+        else:
+            return '', 404
+
+    @staticmethod
+    def select_matching_projects(search_criteria):
         search_string = None
         active = None
 
@@ -68,23 +96,20 @@ class ProjectDAO(object):
             return 'No data sent', 404
 
         if search_string:
-            matching_projects = [project for project in dao.projects
-                                 if (search_string in project['comments'] or
-                                     search_string in project['short_name'])]
+            matching_projects = [temp_project for temp_project in dao.projects
+                                 if (search_string in temp_project['comments'] or
+                                     search_string in temp_project['short_name'])]
         else:
-            matching_projects = [project for project in dao.projects]
+            matching_projects = [temp_project for temp_project in dao.projects]
 
         if active is True or active is False:
-            projects_to_remove = [project for project in matching_projects
-                                  if project['active'] is not active]
+            projects_to_remove = [temp_project for temp_project in matching_projects
+                                  if temp_project['active'] is not active]
 
-            for project in projects_to_remove:
-                matching_projects.remove(project)
+            for temp_project in projects_to_remove:
+                matching_projects.remove(temp_project)
 
-        if len(matching_projects) > 0:
-            return matching_projects
-        else:
-            return '', 404
+        return matching_projects
 
 
 dao = ProjectDAO()
@@ -145,11 +170,41 @@ class Project(Resource):
 @ns.route('/search/')
 @ns.response(404, 'Project not found')
 class SearchProject(Resource):
-    """To search for projects and change their status"""
+    """To search for projects"""
 
     @ns.doc('search_project')
-    @ns.expect(search_criteria)
+    @ns.expect(search_model)
     @ns.marshal_list_with(project, code=200)
     def post(self):
         """Fetch projects given a string"""
         return dao.search(ns.payload)
+
+
+@ns.route('/status/activate/<uid>')
+@ns.response(404, 'Project not found')
+@ns.param('uid', 'The project identifier')
+class ActivateProject(Resource):
+    """To set a project active"""
+
+    @ns.doc('set_project_active')
+    @token_policies.administrator_required
+    @ns.marshal_list_with(project, code=200)
+    @ns.response(205, 'Project status changed')
+    def post(self, uid):
+        """Set projects active given a string"""
+        return dao.activate(uid)
+
+
+@ns.route('/status/deactivate/<uid>')
+@ns.response(404, 'Project not found')
+@ns.param('uid', 'The project identifier')
+class DeactivateProject(Resource):
+    """To set a project inactive"""
+
+    @ns.doc('set_project_inactive')
+    @token_policies.administrator_required
+    @ns.marshal_list_with(project, code=200)
+    @ns.response(205, 'Project status changed')
+    def post(self, uid):
+        """Set projects inactive given a string"""
+        return dao.deactivate(uid)
