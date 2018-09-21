@@ -162,7 +162,7 @@ class Project(Resource):
     @ns.expect(project)
     @ns.marshal_with(project)
     @token_policies.administrator_required
-    def put(self, uid):
+    def patch(self, uid):
         """Update a project given its identifier"""
         return dao.update(uid, ns.payload)
 
@@ -190,7 +190,7 @@ class ActivateProject(Resource):
     @token_policies.administrator_required
     @ns.marshal_list_with(project, code=200)
     @ns.response(205, 'Project status changed')
-    def post(self, uid):
+    def patch(self, uid):
         """Set projects active given a string"""
         return dao.activate(uid)
 
@@ -205,6 +205,6 @@ class DeactivateProject(Resource):
     @token_policies.administrator_required
     @ns.marshal_list_with(project, code=200)
     @ns.response(205, 'Project status changed')
-    def post(self, uid):
+    def patch(self, uid):
         """Set projects inactive given a string"""
         return dao.deactivate(uid)

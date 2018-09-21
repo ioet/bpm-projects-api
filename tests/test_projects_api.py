@@ -102,7 +102,7 @@ def test_put_project_properties(client, auth_token):
         "active": True
     }
 
-    response = client.put("/projects/" + last_created_project_id,
+    response = client.patch("/projects/" + last_created_project_id,
                           json=properties_update,
                           headers={'token': auth_token},
                           follow_redirects=True)
@@ -362,7 +362,7 @@ def test_activate_active(client, auth_token):
 
     last_created_project_id = str(projects_dao.counter)
 
-    response = client.post("/projects/status/activate/" + last_created_project_id,
+    response = client.patch("/projects/status/activate/" + last_created_project_id,
                            headers={'token': auth_token},
                            follow_redirects=True)
 
@@ -382,7 +382,7 @@ def test_activate_inactive(client, auth_token):
 
     last_created_project_id = str(projects_dao.counter)
 
-    response = client.post("/projects/status/activate/" + last_created_project_id,
+    response = client.patch("/projects/status/activate/" + last_created_project_id,
                            headers={'token': auth_token},
                            follow_redirects=True)
 
@@ -404,7 +404,7 @@ def test_deactivating_inactive(client, auth_token):
 
     last_created_project_id = str(projects_dao.counter)
 
-    response = client.post("/projects/status/deactivate/" + last_created_project_id,
+    response = client.patch("/projects/status/deactivate/" + last_created_project_id,
                            headers={'token': auth_token},
                            follow_redirects=True)
 
@@ -424,7 +424,7 @@ def test_deactivating_active(client, auth_token):
 
     last_created_project_id = str(projects_dao.counter)
 
-    response = client.post("/projects/status/deactivate/" + last_created_project_id,
+    response = client.patch("/projects/status/deactivate/" + last_created_project_id,
                            headers={'token': auth_token},
                            follow_redirects=True)
 
@@ -442,7 +442,7 @@ def test_deactivate_not_existing(client, auth_token):
 
     last_created_project_id = str(projects_dao.counter)
 
-    response = client.post("/projects/status/deactivate/" + last_created_project_id,
+    response = client.patch("/projects/status/deactivate/" + last_created_project_id,
                            headers={'token': auth_token},
                            follow_redirects=True)
     print(response)
@@ -455,7 +455,7 @@ def test_activate_not_existing(client, auth_token):
 
     last_created_project_id = str(projects_dao.counter)
 
-    response = client.post("/projects/status/activate/" + last_created_project_id,
+    response = client.patch("/projects/status/activate/" + last_created_project_id,
                            headers={'token': auth_token},
                            follow_redirects=True)
 
