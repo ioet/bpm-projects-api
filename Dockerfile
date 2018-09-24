@@ -22,5 +22,4 @@ ENV LANG C.UTF-8
 
 EXPOSE 8000
 
-# 4 workers
 CMD ["gunicorn", "-b 0.0.0.0:8000", "run:app"]

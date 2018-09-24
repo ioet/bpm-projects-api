@@ -2,6 +2,7 @@
 Using recommended patterns of scaling from
 https://flask-restplus.readthedocs.io/en/stable/scaling.html
 """
+from flask import current_app as app
 from flask_restplus import Api
 
 from . import project
@@ -21,8 +22,7 @@ api.add_namespace(project.ns)
 @api.errorhandler
 def default_error_handler(e):
     try:
-        from instance import config
-        if not config.FLASK_DEBUG:
+        if not app.config["FLASK_DEBUG"]:
             return {'message': 'An unhandled exception occurred.'}, 500
     except Exception:
         pass

@@ -4,7 +4,7 @@ from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 
 
-def create_app(config=None, config_object=None):
+def create_app(config=None, config_object='bpm_projects_api.config.DevelopmentConfig'):
     """Create and configure an instance of the Flask app."""
     app = Flask(__name__, instance_relative_config=True)
 
