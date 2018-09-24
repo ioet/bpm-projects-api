@@ -1,5 +1,6 @@
 """
-Using recommended patterns of scaling from https://flask-restplus.readthedocs.io/en/stable/scaling.html
+Using recommended patterns of scaling from
+https://flask-restplus.readthedocs.io/en/stable/scaling.html
 """
 from flask_restplus import Api
 

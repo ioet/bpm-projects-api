@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from functools import wraps
 
 import jwt
-from flask import request, current_app as app, make_response, Blueprint, json, session, redirect
+from flask import request, current_app as app, make_response, \
+    Blueprint, session, redirect
 from flask.json import jsonify
 from flask_restplus import abort
 from jwt import DecodeError, ExpiredSignatureError
@@ -71,7 +72,8 @@ class TokenPolicies(object):
             if data.get('role', 'user') != 'admin':
                 raise PolicyError("Admin user is required")
 
-        return token_required(f, validate_function=check_if_user_is_administrator)
+        return token_required(f,
+                              validate_function=check_if_user_is_administrator)
 
 
 @ns.route('/login')

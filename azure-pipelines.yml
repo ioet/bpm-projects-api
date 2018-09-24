@@ -13,7 +13,7 @@ steps:
     architecture: 'x64'
 
 
-- PythonScript@0
+- task: PythonScript@0
   displayName: 'Exp'
 
 - script: |
@@ -25,7 +25,7 @@ steps:
 
 - script: |
     pip3 install -r requirements.txt
-  displayName: 'Install project requirements'
+  displayName: 'Install requirements'
 
 - script: |
     pip install pytest
@@ -37,3 +37,7 @@ steps:
   inputs:
     testResultsFiles: '**/test-*.xml'
     testRunTitle: 'Publish test results for Python $(python.version)'
+
+
+
+
