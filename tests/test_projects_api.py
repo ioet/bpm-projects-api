@@ -1,12 +1,14 @@
 from flask import json
 from bpm_projects_api.apis.project import dao as projects_dao
-from tests.utils import create_sample_project, create_sample_inactive_project
+from tests.utils import create_sample_project
 
 
 def test_list_all_projects_should_return_nothing(client, auth_token):
     """Check if all projects are listed"""
 
-    response = client.get("/projects/", headers={'token': auth_token}, follow_redirects=True)
+    response = client.get("/projects/",
+                          headers={'token': auth_token},
+                          follow_redirects=True)
     assert 200 == response.status_code
 
     json_data = json.loads(response.data)
@@ -38,7 +40,9 @@ def test_get_all_projects_should_return_a_project(client, auth_token):
     client.post("/projects/", headers={'token': auth_token},
                 json=project, follow_redirects=True)
 
-    response = client.get("/projects/", headers={'token': auth_token}, follow_redirects=True)
+    response = client.get("/projects/",
+                          headers={'token': auth_token},
+                          follow_redirects=True)
 
     last_created_project_id = str(projects_dao.counter)
     client.delete("/projects/" + last_created_project_id,
@@ -77,7 +81,9 @@ def test_get_valid_project(client, auth_token):
 def test_get_invalid_project(client, auth_token):
     """If invalid project id is given is should return not found"""
 
-    response = client.get("/projects/xyz", headers={'token': auth_token}, follow_redirects=True)
+    response = client.get("/projects/xyz",
+                          headers={'token': auth_token},
+                          follow_redirects=True)
 
     assert 404 == response.status_code
 
@@ -115,7 +121,8 @@ def test_put_project_properties(client, auth_token):
 
     obtained_project = json.loads(response.data)
     assert obtained_project['short_name'] == new_name
-    assert len(obtained_project["properties_table"]) == 1  # Substituted, not added
+    # Substituted, not added
+    assert len(obtained_project["properties_table"]) == 1
 
 
 def test_delete_existing_project(client, auth_token):

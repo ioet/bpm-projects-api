@@ -137,7 +137,8 @@ def test_search_inactive_not_exising(client, auth_token):
 
 
 def test_search_string_active_existing(client, auth_token):
-    """Searching with a string for an active, existing project should return 200"""
+    """Searching with a string for an active, existing project
+    should return 200"""
 
     search_criteria = {
         'search_string': 'Pro',
@@ -161,7 +162,8 @@ def test_search_string_active_existing(client, auth_token):
 
 
 def test_search_string_active_not_existing(client, auth_token):
-    """Searching with a string for an active, not existing project should return 404"""
+    """Searching with a string for an active, not existing project
+    should return 404"""
 
     search_criteria = {
         'search_string': 'Pro',
@@ -176,7 +178,8 @@ def test_search_string_active_not_existing(client, auth_token):
 
 
 def test_search_string_inactive_existing(client, auth_token):
-    """Searching with a string for an inactive, existing project should return 200"""
+    """Searching with a string for an inactive, existing project
+    should return 200"""
 
     search_criteria = {
         'search_string': 'Pro',
@@ -200,7 +203,8 @@ def test_search_string_inactive_existing(client, auth_token):
 
 
 def test_search_string_inactive_not_existing(client, auth_token):
-    """Searching with a string for an inactive, not existing project should return 404"""
+    """Searching with a string for an inactive, not existing project
+    should return 404"""
 
     search_criteria = {
         'search_string': 'Pro',

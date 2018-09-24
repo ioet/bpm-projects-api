@@ -28,18 +28,24 @@ class AuthActions:
         self._app = app
         self._client = client
 
-    def login(self, username=test_config["TEST_USER"], password=test_config["USER_PASSWORD"]):
+    def login(self, username=test_config["TEST_USER"],
+              password=test_config["USER_PASSWORD"]):
         login_url = url_for("security.login", self._app)
-        return open_with_basic_auth(self._client, login_url, username, password)
+        return open_with_basic_auth(self._client,
+                                    login_url,
+                                    username,
+                                    password)
 
     def logout(self):
-        return self._client.get(url_for("security.logout", self._app), follow_redirects=True)
+        return self._client.get(url_for("security.logout",
+                                        self._app), follow_redirects=True)
 
 
 @pytest.fixture
 def app():
     """Create and configure a new app instance for each test."""
     return create_app(test_config)
+
 
 @pytest.fixture
 def client(app):
