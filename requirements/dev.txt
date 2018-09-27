@@ -1,0 +1,15 @@
+# requirements/dev.txt
+
+-r prod.txt
+
+#Tests
+pytest==3.8.0
+
+# Coverage
+coverage==4.4.2
+
+# Debug
+Flask-DebugToolbar==0.10.1
+
+# PEP8
+flake8==3.5.0

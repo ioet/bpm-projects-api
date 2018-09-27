@@ -25,10 +25,15 @@ Go to the directory of the project
     ```
 1. Install the dependencies using the `requirements.txt`
 
+   For development
+    ```bash
+     pip install -r requirements/dev.txt
+    ```
+   For production
     ```bash
      pip install -r requirements.txt
     ```
-
+    
 ### Usage
 
 Run the project using 
@@ -67,7 +72,7 @@ Have in consideration that the token will expire each minute.
 To execute all tests just run
 
 ```bash
-pytest -v
+python3 -m pytest -v
 ```
 The `-v` shows which tests failed or succeeded.
 Have in count that you can also debug each test (`test_*` files) with the help of an IDE like PyCharm.
@@ -97,7 +102,7 @@ Afterwards you can **import** this collection into [Postman][postman_app] and us
 test this api
 
 <a href="">
-  <img src="img/bpm-projects-postman-collection.png" title="After the postman collection is imported" />
+  <img src="requirements/img/bpm-projects-postman-collection.png" title="After the postman collection is imported" />
 </a>
 
 ## Built with
