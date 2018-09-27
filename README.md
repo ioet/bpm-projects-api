@@ -1,7 +1,7 @@
 BPM Projects API
 ================
+[![Build Status](https://travis-ci.com/ioet/bpm-projects-api.svg?branch=azure-pipelines)](https://travis-ci.com/ioet/bpm-projects-api)
 [![Build Status](https://dev.azure.com/ioet-bpm/bpm-projects-api/_apis/build/status/bpm-projects-api-Docker%20container-CI-CD)](https://dev.azure.com/ioet-bpm/bpm-projects-api/_build/latest?definitionId=7)
-[![Build Status](https://vsrm.dev.azure.com/ioet-bpm/_apis/public/Release/badge/53b8ced8-7634-483b-bf19-342d77b2f07a/2/2)](https://dev.azure.com/ioet-bpm/bpm-projects-api/_build/latest?definitionId=7)
 
 
 API for BPM Projects
@@ -72,10 +72,29 @@ Have in consideration that the token will expire each minute.
 To execute all tests just run
 
 ```bash
-python3 -m pytest -v
+ python3 -m pytest -v
 ```
 The `-v` shows which tests failed or succeeded.
 Have in count that you can also debug each test (`test_*` files) with the help of an IDE like PyCharm.
+
+#### Coverage
+To check the coverage of the tests execute
+
+```bash
+ coverage run -m pytest -v
+```
+
+To get a report table 
+
+```bash
+ coverage report
+```
+
+To get a full report in html
+```bash
+ coverage html
+```
+Then check in the [htmlcov/index.html](./htmlcov/index.html) to see it
 
 ### CLI
 

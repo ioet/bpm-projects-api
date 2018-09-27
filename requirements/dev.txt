@@ -6,7 +6,7 @@
 pytest==3.8.0
 
 # Coverage
-coverage==4.4.2
+coverage==4.5.1
 
 # Debug
 Flask-DebugToolbar==0.10.1
