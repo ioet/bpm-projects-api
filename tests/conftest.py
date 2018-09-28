@@ -24,6 +24,7 @@ class User:
 
 class AuthActions:
     """Auth actions container in tests"""
+
     def __init__(self, app, client):
         self._app = app
         self._client = client
@@ -44,7 +45,9 @@ class AuthActions:
 @pytest.fixture
 def app():
     """Create and configure a new app instance for each test."""
-    return create_app(test_config)
+    return create_app(config=test_config,
+                      config_object='bpm_projects_api.config.TestingConfig')
+
 
 
 @pytest.fixture
