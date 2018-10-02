@@ -37,3 +37,6 @@ def handle_invalid_request_exceptions(e):
 def default_error_handler(e):
     if "FLASK_DEBUG" not in app.config:
         return {'message': 'An unhandled exception occurred.'}, 500
+
+
+__all__ = [api]

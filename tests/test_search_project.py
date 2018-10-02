@@ -1,6 +1,6 @@
 from flask import json
 
-from bpm_projects_api.apis.project import dao as projects_dao
+from bpm_projects_api.apis.project import project_dao
 from tests.utils import create_sample_project
 
 
@@ -48,7 +48,7 @@ def test_search_not_existing_string(client, auth_token):
                            headers={'token': auth_token},
                            json=search_criteria, follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     client.delete("/projects/" + last_created_project_id,
                   headers={'token': auth_token},
                   follow_redirects=True)
@@ -71,7 +71,7 @@ def test_search_active_existing(client, auth_token):
                            headers={'token': auth_token},
                            json=search_criteria, follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     client.delete("/projects/" + last_created_project_id,
                   headers={'token': auth_token},
                   follow_redirects=True)
@@ -97,7 +97,7 @@ def test_search_inactive_existing(client, auth_token, sample_project):
     """Searching for an existing inactive project should return 200"""
     # Given
     project_id = sample_project["uid"];
-    projects_dao.update(project_id, {"active": False})
+    project_dao.update(project_id, {"active": False})
     search_criteria = {'active': False}
 
     # When
@@ -139,7 +139,7 @@ def test_search_string_active_existing(client, auth_token):
                            headers={'token': auth_token},
                            json=search_criteria, follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     client.delete("/projects/" + last_created_project_id,
                   headers={'token': auth_token},
                   follow_redirects=True)
@@ -170,7 +170,7 @@ def test_search_string_inactive_existing(client, auth_token, sample_project):
         'active': False
     }
     project_id = sample_project["uid"];
-    projects_dao.update(project_id, {"active": False})
+    project_dao.update(project_id, {"active": False})
 
     # When
     response = client.post("/projects/search/",

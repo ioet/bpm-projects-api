@@ -5,7 +5,7 @@ import pytest
 from flask import json
 
 from bpm_projects_api import create_app
-from bpm_projects_api.apis.project import dao
+from bpm_projects_api.model import project_dao, MissingResource
 from tests.utils import url_for, open_with_basic_auth, create_sample_project
 
 test_config = {
@@ -88,6 +88,6 @@ def auth_token(auth, user):
 
 @pytest.yield_fixture(scope="function")
 def sample_project():
-    project = dao.create(create_sample_project())
+    project = project_dao.create(create_sample_project())
     yield project
-    dao.delete(project["uid"])
+    project_dao.delete(project["uid"])

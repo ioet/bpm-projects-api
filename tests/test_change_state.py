@@ -1,13 +1,13 @@
 from flask import json
 
-from bpm_projects_api.apis.project import dao as projects_dao
+from bpm_projects_api.apis.project import project_dao
 
 
 def test_activate_inactive(client, auth_token, sample_project):
     """Activating an inactive project sets active to True, returns 204"""
     # Given
     project_id = sample_project["uid"];
-    projects_dao.update(project_id, {"active": False})
+    project_dao.update(project_id, {"active": False})
 
     # When
     response = client.post("/projects/%s" % project_id,

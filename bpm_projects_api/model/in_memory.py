@@ -1,4 +1,8 @@
-from bpm_projects_api.model import MissingResource, InvalidInput, InvalidMatch
+"""
+Models' implementations in memory
+"""
+
+from . import MissingResource, InvalidInput, InvalidMatch
 
 
 class ProjectDAO(object):

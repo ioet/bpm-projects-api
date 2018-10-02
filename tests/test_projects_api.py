@@ -1,6 +1,6 @@
 from flask import json
 
-from bpm_projects_api.apis.project import dao as projects_dao
+from bpm_projects_api.model import project_dao
 from tests.utils import create_sample_project
 
 
@@ -23,7 +23,7 @@ def test_post_new_project(client, auth_token):
     response = client.post("/projects/", headers={'token': auth_token},
                            json=project, follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     client.delete("/projects/" + last_created_project_id,
                   headers={'token': auth_token},
                   follow_redirects=True)
@@ -45,7 +45,7 @@ def test_get_all_projects_should_return_a_project(client, auth_token):
                           headers={'token': auth_token},
                           follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     client.delete("/projects/" + last_created_project_id,
                   headers={'token': auth_token},
                   follow_redirects=True)
@@ -63,12 +63,12 @@ def test_get_valid_project(client, auth_token):
     client.post("/projects/", headers={'token': auth_token},
                 json=project, follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     response = client.get("/projects/" + last_created_project_id,
                           headers={'token': auth_token},
                           follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     client.delete("/projects/" + last_created_project_id,
                   headers={'token': auth_token},
                   follow_redirects=True)
@@ -97,10 +97,10 @@ def test_delete_existing_project(client, auth_token):
                 json=project, follow_redirects=True)
 
     # Given
-    assert len(projects_dao.projects) == 1
+    assert len(project_dao.projects) == 1
 
     # When
-    last_created_project_id = str(projects_dao.counter)
+    last_created_project_id = str(project_dao.counter)
     response = client.delete("/projects/" + last_created_project_id,
                              headers={'token': auth_token},
                              follow_redirects=True)
@@ -109,4 +109,4 @@ def test_delete_existing_project(client, auth_token):
     assert 204 == response.status_code
     assert 0 == len(response.data)
 
-    assert len(projects_dao.projects) == 0
+    assert len(project_dao.projects) == 0

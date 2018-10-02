@@ -1,6 +1,6 @@
 from flask_restplus import fields, Resource, Namespace, abort, inputs
 
-from bpm_projects_api.apis.dao import ProjectDAO
+from bpm_projects_api.model import project_dao
 from bpm_projects_api.core.security import token_required, token_policies
 
 # Project namespace
@@ -37,8 +37,6 @@ search_model = ns.model('SearchCriteria', {
                              description='true|false the project is active'),
 })
 
-dao = ProjectDAO()
-
 
 @ns.route('/')
 class Projects(Resource):
@@ -47,7 +45,7 @@ class Projects(Resource):
     @token_required
     def get(self):
         """List all projects"""
-        return dao.projects
+        return project_dao.projects
 
     @ns.doc('create_project')
     @ns.expect(project)
@@ -55,7 +53,7 @@ class Projects(Resource):
     @token_policies.administrator_required
     def post(self):
         """Create a project"""
-        return dao.create(ns.payload), 201
+        return project_dao.create(ns.payload), 201
 
 
 @ns.route('/<string:uid>')
@@ -66,14 +64,14 @@ class Project(Resource):
     @ns.marshal_with(project)
     def get(self, uid):
         """Retrieve a project"""
-        return dao.get(uid)
+        return project_dao.get(uid)
 
     @ns.doc('delete_project')
     @ns.response(204, 'Project deleted')
     @token_policies.administrator_required
     def delete(self, uid):
         """Deletes a project"""
-        dao.delete(uid)
+        project_dao.delete(uid)
         return None, 204
 
     @ns.doc('put_project')
@@ -82,7 +80,7 @@ class Project(Resource):
     @token_policies.administrator_required
     def put(self, uid):
         """Create or replace a project"""
-        return dao.update(uid, ns.payload)
+        return project_dao.update(uid, ns.payload)
 
 
 @ns.route('/search/')
@@ -93,7 +91,7 @@ class SearchProject(Resource):
     @ns.marshal_list_with(project, code=200)
     def post(self):
         """Search for projects given some criteria(s)"""
-        return dao.search(ns.payload)
+        return project_dao.search(ns.payload)
 
 
 ProjectUpdateParser = ns.parser()
@@ -121,7 +119,7 @@ class ChangeProjectState(Resource):
             update_data = {
                 "active": args["active"]
             }
-            dao.update(uid, update_data)
+            project_dao.update(uid, update_data)
             return None, 204
         except ValueError:
             abort(code=400)

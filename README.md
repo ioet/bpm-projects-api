@@ -121,7 +121,7 @@ Afterwards you can **import** this collection into [Postman][postman_app] and us
 test this api
 
 <a href="">
-  <img src="requirements/img/bpm-projects-postman-collection.png" title="After the postman collection is imported" />
+  <img src="img/bpm-projects-postman-collection.png" title="After the postman collection is imported" />
 </a>
 
 ## Built with
