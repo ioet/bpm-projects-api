@@ -34,13 +34,6 @@ class PolicyError(Exception):
     pass
 
 
-class MissingResource(Exception):
-    """
-    Errors related to missing resource in the system
-    """
-    pass
-
-
 def token_required(f, validate_function=None):
     @wraps(f)
     def validate_token(*args, **kwargs):
@@ -74,6 +67,7 @@ class TokenPolicies(object):
         """
         Is the user an administrator
         """
+
         def check_if_user_is_administrator(data):
             if data.get('role', 'user') != 'admin':
                 raise PolicyError("Admin user is required")

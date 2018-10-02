@@ -1,9 +1,9 @@
 from flask_restplus import fields, Resource, Namespace, abort, inputs
-# Project namespace
-from flask_restplus.fields import Raw
 
 from bpm_projects_api.apis.dao import ProjectDAO
-from bpm_projects_api.core.security import token_required, token_policies, MissingResource
+from bpm_projects_api.core.security import token_required, token_policies
+
+# Project namespace
 
 ns = Namespace('projects', description='Operations for projects of the BPM')
 
@@ -35,19 +35,11 @@ search_model = ns.model('SearchCriteria', {
                              description='true=only active, false=only inactive, none=all'),
 })
 
-
-def field_payload(name, field: Raw):
-    """Returns a field to be used as payload"""
-    return ns.model(name, {'value': field})
-
-
 dao = ProjectDAO()
 
 
 @ns.route('/')
 class Projects(Resource):
-    """Shows a list of all projects"""
-
     @ns.doc('list_projects')
     @ns.marshal_list_with(project, code=200)
     @token_required
@@ -68,8 +60,6 @@ class Projects(Resource):
 @ns.response(404, 'Project not found')
 @ns.param('uid', 'The project identifier')
 class Project(Resource):
-    """To show a project or delete it"""
-
     @ns.doc('get_project')
     @ns.marshal_with(project)
     def get(self, uid):
@@ -117,8 +107,8 @@ activePropertyParser.add_argument('active',
 @ns.param('active', 'Is the project active?', 'formData')
 @ns.response(404, 'Project not found')
 @ns.response(204, 'Status of the project successfully updated')
+@ns.response(400, "Parameter 'active' was not specified")
 class ProjectStatus(Resource):
-
     @ns.doc('update_project_status')
     @ns.expect(activePropertyParser)
     @token_policies.administrator_required
@@ -129,6 +119,4 @@ class ProjectStatus(Resource):
             dao.activate(uid, args['active'])
             return None, 204
         except ValueError:
-            abort(message="value is missing", code=400)
-        except MissingResource as error:
-            abort(message=error, code=400)
+            abort(message="Parameter 'active' was not specified", code=400)

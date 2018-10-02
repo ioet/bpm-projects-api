@@ -2,9 +2,10 @@
 Using recommended patterns of scaling from
 https://flask-restplus.readthedocs.io/en/stable/scaling.html
 """
-from flask import current_app as app, make_response
+from flask import current_app as app
 from flask_restplus import Api
 
+from bpm_projects_api.model import MissingResource, InvalidInput
 from . import project
 from ..core import security
 
@@ -19,10 +20,19 @@ api = Api(
 api.add_namespace(project.ns)
 
 
+@api.errorhandler(MissingResource)
+def handle_not_found_exceptions(e):
+    """Return a 404 status code error"""
+    return {'message': str(e)}, 404
+
+
+@api.errorhandler(InvalidInput)
+def handle_invalid_request_exceptions(e):
+    """Return a 400 status code error"""
+    return {'message': str(e)}, 400
+
+
 @api.errorhandler
 def default_error_handler(e):
-    try:
-        if not app.config["FLASK_DEBUG"]:
-            return {'message': 'An unhandled exception occurred.'}, 500
-    except Exception:
-        pass
+    if "FLASK_DEBUG" not in app.config:
+        return {'message': 'An unhandled exception occurred.'}, 500

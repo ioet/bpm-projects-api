@@ -1,4 +1,4 @@
-from bpm_projects_api.core.security import MissingResource
+from bpm_projects_api.model import MissingResource, InvalidInput
 
 
 class ProjectDAO(object):
@@ -32,15 +32,14 @@ class ProjectDAO(object):
         if len(matching_projects) > 0:
             return matching_projects
         else:
-            return '', 404
+            raise MissingResource("No project found for the specified criteria")
 
-    def activate(self, uid: str, isActive: bool):
+    def activate(self, uid: str, is_active: bool):
         project = self.get(uid)
-        if (project):
-            project['active'] = isActive
+        if project:
+            project['active'] = is_active
         else:
             raise MissingResource("project '%s' doesnt exist" % uid)
-
 
     @staticmethod
     def select_matching_projects(search_criteria):
@@ -53,7 +52,7 @@ class ProjectDAO(object):
             active = search_criteria['active']
 
         if search_string is None and active is None:
-            return 'No data sent', 404
+            raise InvalidInput("Invalid search input")
 
         if search_string:
             matching_projects = [temp_project for temp_project in dao.projects
