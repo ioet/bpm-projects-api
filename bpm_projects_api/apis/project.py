@@ -1,7 +1,9 @@
-from flask_restplus import fields, Resource, Namespace
+from flask_restplus import fields, Resource, Namespace, abort, inputs
+
+from bpm_projects_api.apis.dao import ProjectDAO
+from bpm_projects_api.core.security import token_required, token_policies
 
 # Project namespace
-from bpm_projects_api.core.security import token_required, token_policies
 
 ns = Namespace('projects', description='Operations for projects of the BPM')
 
@@ -25,42 +27,21 @@ project = ns.model('Project', {
                                          'or not')
 })
 
-
-class ProjectDAO(object):
-    def __init__(self):
-        self.counter = 0
-        self.projects = []
-
-    def get(self, id):
-        for project in self.projects:
-            if project['uid'] == id:
-                return project
-        ns.abort(404, "The project {} doesn't exist".format(id))
-
-    def create(self, project):
-        self.counter += 1
-        project['uid'] = str(self.counter)
-        self.projects.append(project)
-        return project
-
-    def update(self, id, data):
-        project = self.get(id)
-        project.update(data)
-        return project
-
-    def delete(self, id):
-        project = self.get(id)
-        self.projects.remove(project)
-
+# Search model
+search_model = ns.model('SearchCriteria', {
+    'search_string': fields.String(
+        title='Keywords',
+        description='What you want to search for in the comments/the name'
+    ),
+    'active': fields.Boolean(title='Is active?',
+                             description='true|false the project is active'),
+})
 
 dao = ProjectDAO()
 
 
 @ns.route('/')
-@ns.doc()
 class Projects(Resource):
-    """Shows a list of all projects"""
-
     @ns.doc('list_projects')
     @ns.marshal_list_with(project, code=200)
     @token_required
@@ -77,24 +58,21 @@ class Projects(Resource):
         return dao.create(ns.payload), 201
 
 
-@ns.route('/<uid>')
+@ns.route('/<string:uid>')
 @ns.response(404, 'Project not found')
 @ns.param('uid', 'The project identifier')
-@ns.doc()
 class Project(Resource):
-    """To show a project or delete it"""
-
     @ns.doc('get_project')
     @ns.marshal_with(project)
     def get(self, uid):
-        """Fetch a given project"""
+        """Retrieve a project"""
         return dao.get(uid)
 
     @ns.doc('delete_project')
     @ns.response(204, 'Project deleted')
     @token_policies.administrator_required
     def delete(self, uid):
-        """Delete a project given its identifier"""
+        """Deletes a project"""
         dao.delete(uid)
         return None, 204
 
@@ -103,5 +81,47 @@ class Project(Resource):
     @ns.marshal_with(project)
     @token_policies.administrator_required
     def put(self, uid):
-        """Update a project given its identifier"""
+        """Create or replace a project"""
         return dao.update(uid, ns.payload)
+
+
+@ns.route('/search/')
+@ns.response(404, 'Project not found')
+class SearchProject(Resource):
+    @ns.doc('search_project')
+    @ns.expect(search_model)
+    @ns.marshal_list_with(project, code=200)
+    def post(self):
+        """Search for projects given some criteria(s)"""
+        return dao.search(ns.payload)
+
+
+ProjectUpdateParser = ns.parser()
+ProjectUpdateParser.add_argument('active',
+                                 type=inputs.boolean,
+                                 location='form',
+                                 required=True,
+                                 help='Is the project active?')
+
+
+@ns.route('/<string:uid>')
+@ns.param('uid', 'The project identifier')
+@ns.param('active', 'Is the project active?', 'body')
+@ns.response(404, 'Project not found')
+@ns.response(204, 'State of the project successfully updated')
+@ns.response(400, "Bad parameters input")
+class ChangeProjectState(Resource):
+    @ns.doc('update_project_status')
+    @ns.expect(ProjectUpdateParser)
+    @token_policies.administrator_required
+    def post(self, uid):
+        """Updates a project using form data"""
+        try:
+            args = ProjectUpdateParser.parse_args()
+            update_data = {
+                "active": args["active"]
+            }
+            dao.update(uid, update_data)
+            return None, 204
+        except ValueError:
+            abort(code=400)
