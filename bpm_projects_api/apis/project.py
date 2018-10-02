@@ -1,7 +1,9 @@
-from flask_restplus import fields, Resource, Namespace
-
+from flask_restplus import fields, Resource, Namespace, abort, inputs
 # Project namespace
-from bpm_projects_api.core.security import token_required, token_policies
+from flask_restplus.fields import Raw
+
+from bpm_projects_api.apis.dao import ProjectDAO
+from bpm_projects_api.core.security import token_required, token_policies, MissingResource
 
 ns = Namespace('projects', description='Operations for projects of the BPM')
 
@@ -34,38 +36,15 @@ search_model = ns.model('SearchCriteria', {
 })
 
 
-class ProjectDAO(object):
-    def __init__(self):
-        self.counter = 0
-        self.projects = []
-
-    def get(self, id):
-        for project in self.projects:
-            if project['uid'] == id:
-                return project
-        ns.abort(404, "The project {} doesn't exist".format(id))
-
-    def create(self, project):
-        self.counter += 1
-        project['uid'] = str(self.counter)
-        self.projects.append(project)
-        return project
-
-    def update(self, id, data):
-        project = self.get(id)
-        project.update(data)
-        return project
-
-    def delete(self, id):
-        project = self.get(id)
-        self.projects.remove(project)
+def field_payload(name, field: Raw):
+    """Returns a field to be used as payload"""
+    return ns.model(name, {'value': field})
 
 
 dao = ProjectDAO()
 
 
 @ns.route('/')
-@ns.doc()
 class Projects(Resource):
     """Shows a list of all projects"""
 
@@ -88,21 +67,20 @@ class Projects(Resource):
 @ns.route('/<string:uid>')
 @ns.response(404, 'Project not found')
 @ns.param('uid', 'The project identifier')
-@ns.doc()
 class Project(Resource):
     """To show a project or delete it"""
 
     @ns.doc('get_project')
     @ns.marshal_with(project)
     def get(self, uid):
-        """Fetch a given project"""
+        """Retrieve a project"""
         return dao.get(uid)
 
     @ns.doc('delete_project')
     @ns.response(204, 'Project deleted')
     @token_policies.administrator_required
     def delete(self, uid):
-        """Delete a project given its identifier"""
+        """Deletes a project"""
         dao.delete(uid)
         return None, 204
 
@@ -111,48 +89,46 @@ class Project(Resource):
     @ns.marshal_with(project)
     @token_policies.administrator_required
     def put(self, uid):
-        """Update a project given its identifier"""
+        """Add or replace a project"""
         return dao.update(uid, ns.payload)
 
 
 @ns.route('/search/')
 @ns.response(404, 'Project not found')
 class SearchProject(Resource):
-    """To search for projects"""
-
-    @ns.doc('search_project')
+    @ns.doc('search_project', body='Search a project in the system')
     @ns.expect(search_model)
     @ns.marshal_list_with(project, code=200)
     def post(self):
-        """Fetch projects given a string"""
+        """Search for projects given some criteria(s)"""
         return dao.search(ns.payload)
 
 
-@ns.route('/status/activate/<string:uid>')
-@ns.response(404, 'Project not found')
+activePropertyParser = ns.parser()
+activePropertyParser.add_argument('active',
+                                  type=inputs.boolean,
+                                  location='form',
+                                  required=True,
+                                  help='Is the project active?')
+
+
+@ns.route('/<string:uid>/active')
 @ns.param('uid', 'The project identifier')
-class ActivateProject(Resource):
-    """To set a project active"""
-
-    @ns.doc('set_project_active')
-    @token_policies.administrator_required
-    @ns.marshal_list_with(project, code=200)
-    @ns.response(205, 'Project status changed')
-    def patch(self, uid):
-        """Set projects active given a string"""
-        return dao.activate(uid)
-
-
-@ns.route('/status/deactivate/<string:uid>')
+@ns.param('active', 'Is the project active?', 'formData')
 @ns.response(404, 'Project not found')
-@ns.param('uid', 'The project identifier')
-class DeactivateProject(Resource):
-    """To set a project inactive"""
+@ns.response(204, 'Status of the project successfully updated')
+class ProjectStatus(Resource):
 
-    @ns.doc('set_project_inactive')
+    @ns.doc('update_project_status')
+    @ns.expect(activePropertyParser)
     @token_policies.administrator_required
-    @ns.marshal_list_with(project, code=200)
-    @ns.response(205, 'Project status changed')
-    def patch(self, uid):
-        """Set projects inactive given a string"""
-        return dao.deactivate(uid)
+    def post(self, uid):
+        """Updates the project active status"""
+        try:
+            args = activePropertyParser.parse_args()
+            dao.activate(uid, args['active'])
+            return None, 204
+        except ValueError:
+            abort(message="value is missing", code=400)
+        except MissingResource as error:
+            abort(message=error, code=400)

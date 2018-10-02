@@ -1,3 +1,6 @@
+from bpm_projects_api.core.security import MissingResource
+
+
 class ProjectDAO(object):
     def __init__(self):
         self.counter = 0
@@ -5,9 +8,8 @@ class ProjectDAO(object):
 
     def get(self, id):
         for project in self.projects:
-            if project['uid'] == id:
+            if project.get('uid') == id:
                 return project
-        return '', 404
 
     def create(self, project):
         self.counter += 1
@@ -32,25 +34,13 @@ class ProjectDAO(object):
         else:
             return '', 404
 
-    def deactivate(self, project_id):
-        temp_project = self.get(project_id)
-        if temp_project == ('', 404):
-            return '', 404
-        elif temp_project['active'] is True:
-            temp_project['active'] = False
-            return temp_project
+    def activate(self, uid: str, isActive: bool):
+        project = self.get(uid)
+        if (project):
+            project['active'] = isActive
         else:
-            return '', 404
+            raise MissingResource("project '%s' doesnt exist" % uid)
 
-    def activate(self, project_id):
-        temp_project = self.get(project_id)
-        if temp_project == ('', 404):
-            return '', 404
-        elif temp_project['active'] is False:
-            temp_project['active'] = True
-            return temp_project
-        else:
-            return '', 404
 
     @staticmethod
     def select_matching_projects(search_criteria):

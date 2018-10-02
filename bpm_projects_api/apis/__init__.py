@@ -2,7 +2,7 @@
 Using recommended patterns of scaling from
 https://flask-restplus.readthedocs.io/en/stable/scaling.html
 """
-from flask import current_app as app
+from flask import current_app as app, make_response
 from flask_restplus import Api
 
 from . import project

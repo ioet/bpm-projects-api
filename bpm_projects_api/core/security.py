@@ -34,6 +34,13 @@ class PolicyError(Exception):
     pass
 
 
+class MissingResource(Exception):
+    """
+    Errors related to missing resource in the system
+    """
+    pass
+
+
 def token_required(f, validate_function=None):
     @wraps(f)
     def validate_token(*args, **kwargs):
