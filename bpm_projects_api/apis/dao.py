@@ -39,17 +39,24 @@ class ProjectDAO(object):
             raise InvalidMatch("No project matched the specified criteria")
 
     def select_matching_projects(self, search_criteria):
+        def matches_search_string(search_str, project):
+            return search_str in project['comments'] or \
+                   search_str in project['short_name']
+
         if not search_criteria:
             raise InvalidInput("No search criteria specified")
 
         if 'search_string' in search_criteria:
-            matching_projects = [p for p in self.projects
-                                 if (search_criteria['search_string'] in p['comments'] or
-                                     search_criteria['search_string'] in p['short_name'])]
+            search_str = search_criteria['search_string']
+            matching_projects = [p for p
+                                 in self.projects
+                                 if matches_search_string(search_str, p)]
         else:
             matching_projects = self.projects
 
         if 'active' in search_criteria:
-            matching_projects = [p for p in matching_projects if p['active'] is search_criteria['active']]
+            matching_projects = [p for p
+                                 in matching_projects
+                                 if p['active'] is search_criteria['active']]
 
         return matching_projects

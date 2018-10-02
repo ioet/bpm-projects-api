@@ -182,7 +182,6 @@ def test_search_string_inactive_existing(client, auth_token, sample_project):
     assert 200 == response.status_code
 
 
-
 def test_search_string_inactive_not_existing(client, auth_token):
     """Searching with a string for an inactive, not existing project
     should return 404"""

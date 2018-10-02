@@ -1,5 +1,3 @@
-
-
 class MissingResource(Exception):
     """
     Errors related to missing resource in the system

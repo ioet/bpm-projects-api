@@ -29,10 +29,12 @@ project = ns.model('Project', {
 
 # Search model
 search_model = ns.model('SearchCriteria', {
-    'search_string': fields.String(title='Keywords',
-                                   description='What you want to search for in the comments/the name'),
+    'search_string': fields.String(
+        title='Keywords',
+        description='What you want to search for in the comments/the name'
+    ),
     'active': fields.Boolean(title='Is active?',
-                             description='true=only active, false=only inactive, none=all'),
+                             description='true|false the project is active'),
 })
 
 dao = ProjectDAO()
