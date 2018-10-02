@@ -79,14 +79,14 @@ class Project(Resource):
     @ns.marshal_with(project)
     @token_policies.administrator_required
     def put(self, uid):
-        """Add or replace a project"""
+        """Create or replace a project"""
         return dao.update(uid, ns.payload)
 
 
 @ns.route('/search/')
 @ns.response(404, 'Project not found')
 class SearchProject(Resource):
-    @ns.doc('search_project', body='Search a project in the system')
+    @ns.doc('search_project')
     @ns.expect(search_model)
     @ns.marshal_list_with(project, code=200)
     def post(self):
@@ -94,29 +94,29 @@ class SearchProject(Resource):
         return dao.search(ns.payload)
 
 
-activePropertyParser = ns.parser()
-activePropertyParser.add_argument('active',
-                                  type=inputs.boolean,
-                                  location='form',
-                                  required=True,
-                                  help='Is the project active?')
+ProjectUpdateParser = ns.parser()
+ProjectUpdateParser.add_argument('active',
+                                 type=inputs.boolean,
+                                 location='form',
+                                 required=True,
+                                 help='Is the project active?')
 
 
-@ns.route('/<string:uid>/active')
+@ns.route('/<string:uid>')
 @ns.param('uid', 'The project identifier')
-@ns.param('active', 'Is the project active?', 'formData')
+@ns.param('active', 'Is the project active?', 'body')
 @ns.response(404, 'Project not found')
-@ns.response(204, 'Status of the project successfully updated')
-@ns.response(400, "Parameter 'active' was not specified")
-class ProjectStatus(Resource):
+@ns.response(204, 'State of the project successfully updated')
+@ns.response(400, "Bad parameters input")
+class ChangeProjectState(Resource):
     @ns.doc('update_project_status')
-    @ns.expect(activePropertyParser)
+    @ns.expect(ProjectUpdateParser)
     @token_policies.administrator_required
     def post(self, uid):
-        """Updates the project active status"""
+        """Updates a project using form data"""
         try:
-            args = activePropertyParser.parse_args()
+            args = ProjectUpdateParser.parse_args()
             dao.activate(uid, args['active'])
             return None, 204
         except ValueError:
-            abort(message="Parameter 'active' was not specified", code=400)
+            abort(code=400)
