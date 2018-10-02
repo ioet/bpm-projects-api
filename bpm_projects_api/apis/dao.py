@@ -1,4 +1,4 @@
-from bpm_projects_api.model import MissingResource, InvalidInput
+from bpm_projects_api.model import MissingResource, InvalidInput, InvalidMatch
 
 
 class ProjectDAO(object):
@@ -36,36 +36,20 @@ class ProjectDAO(object):
         if len(matching_projects) > 0:
             return matching_projects
         else:
-            raise MissingResource("No project found for the specified criteria")
+            raise InvalidMatch("No project matched the specified criteria")
 
-    @staticmethod
-    def select_matching_projects(search_criteria):
-        search_string = None
-        active = None
+    def select_matching_projects(self, search_criteria):
+        if not search_criteria:
+            raise InvalidInput("No search criteria specified")
 
         if 'search_string' in search_criteria:
-            search_string = search_criteria['search_string']
-        if 'active' in search_criteria:
-            active = search_criteria['active']
-
-        if search_string is None and active is None:
-            raise InvalidInput("Invalid search input")
-
-        if search_string:
-            matching_projects = [temp_project for temp_project in dao.projects
-                                 if (search_string in temp_project['comments'] or
-                                     search_string in temp_project['short_name'])]
+            matching_projects = [p for p in self.projects
+                                 if (search_criteria['search_string'] in p['comments'] or
+                                     search_criteria['search_string'] in p['short_name'])]
         else:
-            matching_projects = [temp_project for temp_project in dao.projects]
+            matching_projects = self.projects
 
-        if active is True or active is False:
-            projects_to_remove = [temp_project for temp_project in matching_projects
-                                  if temp_project['active'] is not active]
-
-            for temp_project in projects_to_remove:
-                matching_projects.remove(temp_project)
+        if 'active' in search_criteria:
+            matching_projects = [p for p in matching_projects if p['active'] is search_criteria['active']]
 
         return matching_projects
-
-
-dao = ProjectDAO()

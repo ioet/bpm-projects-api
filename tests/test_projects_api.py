@@ -1,4 +1,5 @@
 from flask import json
+
 from bpm_projects_api.apis.project import dao as projects_dao
 from tests.utils import create_sample_project
 
@@ -86,43 +87,6 @@ def test_get_invalid_project(client, auth_token):
                           follow_redirects=True)
 
     assert 404 == response.status_code
-
-
-def test_put_project_properties(client, auth_token):
-    """Put should only update given properties"""
-
-    project = create_sample_project()
-    client.post("/projects/", headers={'token': auth_token},
-                json=project, follow_redirects=True)
-
-    last_created_project_id = str(projects_dao.counter)
-    new_name = "Updated project" + last_created_project_id
-    properties_update = {
-        "short_name": new_name,
-        "properties_table": [
-            {
-                "id": "company",
-                "content": "ACME"
-            }
-        ],
-        "active": True
-    }
-
-    response = client.patch("/projects/" + last_created_project_id,
-                            json=properties_update,
-                            headers={'token': auth_token},
-                            follow_redirects=True)
-
-    client.delete("/projects/" + last_created_project_id,
-                  headers={'token': auth_token},
-                  follow_redirects=True)
-
-    assert 200 == response.status_code
-
-    obtained_project = json.loads(response.data)
-    assert obtained_project['short_name'] == new_name
-    # Substituted, not added
-    assert len(obtained_project["properties_table"]) == 1
 
 
 def test_delete_existing_project(client, auth_token):

@@ -5,7 +5,7 @@ https://flask-restplus.readthedocs.io/en/stable/scaling.html
 from flask import current_app as app
 from flask_restplus import Api
 
-from bpm_projects_api.model import MissingResource, InvalidInput
+from bpm_projects_api.model import MissingResource, InvalidInput, InvalidMatch
 from . import project
 from ..core import security
 
@@ -21,6 +21,7 @@ api.add_namespace(project.ns)
 
 
 @api.errorhandler(MissingResource)
+@api.errorhandler(InvalidMatch)
 def handle_not_found_exceptions(e):
     """Return a 404 status code error"""
     return {'message': str(e)}, 404
