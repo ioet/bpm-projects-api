@@ -1,5 +1,5 @@
 from bpm_projects_api.apis.project import dao as projects_dao
-from tests.utils import create_sample_project, create_sample_inactive_project
+from tests.utils import create_sample_project
 
 
 def test_search_nothing(client, auth_token):
@@ -99,26 +99,19 @@ def test_search_active_not_existing(client, auth_token):
     assert 404 == response.status_code
 
 
-def test_search_inactive_existing(client, auth_token):
+def test_search_inactive_existing(client, auth_token, sample_project):
     """Searching for an existing inactive project should return 200"""
-
+    #Given
     search_criteria = {
         'active': False
     }
 
-    project = create_sample_inactive_project()
-    client.post("/projects/", headers={'token': auth_token},
-                json=project, follow_redirects=True)
-
+    # When
     response = client.post("/projects/search/",
                            headers={'token': auth_token},
                            json=search_criteria, follow_redirects=True)
 
-    last_created_project_id = str(projects_dao.counter)
-    client.delete("/projects/" + last_created_project_id,
-                  headers={'token': auth_token},
-                  follow_redirects=True)
-
+    # Then
     assert 200 == response.status_code
 
 

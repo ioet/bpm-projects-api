@@ -5,7 +5,8 @@ import pytest
 from flask import json
 
 from bpm_projects_api import create_app
-from tests.utils import url_for, open_with_basic_auth
+from tests.utils import url_for, open_with_basic_auth, create_sample_project
+from bpm_projects_api.apis.project import dao
 
 test_config = {
     "TESTING": True,
@@ -84,3 +85,10 @@ def auth(app, client):
 def auth_token(auth, user):
     response = auth.login(user.username, user.password)
     return json.loads(response.data)["token"]
+
+
+@pytest.yield_fixture(scope="function")
+def sample_project():
+   project = dao.create(create_sample_project())
+   yield project
+   dao.delete(project["uid"])

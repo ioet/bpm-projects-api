@@ -6,10 +6,11 @@ class ProjectDAO(object):
         self.counter = 0
         self.projects = []
 
-    def get(self, id):
+    def get(self, uid):
         for project in self.projects:
-            if project.get('uid') == id:
+            if project.get('uid') == uid:
                 return project
+        raise MissingResource("Project '%s' not found" % uid)
 
     def create(self, project):
         self.counter += 1
@@ -17,13 +18,16 @@ class ProjectDAO(object):
         self.projects.append(project)
         return project
 
-    def update(self, id, data):
-        project = self.get(id)
-        project.update(data)
-        return project
+    def update(self, uid, data):
+        project = self.get(uid)
+        if project:
+            project.update(data)
+            return project
+        else:
+            raise MissingResource("Project '%s' not found" % uid)
 
-    def delete(self, id):
-        project = self.get(id)
+    def delete(self, uid):
+        project = self.get(uid)
         self.projects.remove(project)
 
     def search(self, search_criteria):
@@ -33,13 +37,6 @@ class ProjectDAO(object):
             return matching_projects
         else:
             raise MissingResource("No project found for the specified criteria")
-
-    def activate(self, uid: str, is_active: bool):
-        project = self.get(uid)
-        if project:
-            project['active'] = is_active
-        else:
-            raise MissingResource("project '%s' doesnt exist" % uid)
 
     @staticmethod
     def select_matching_projects(search_criteria):

@@ -116,7 +116,10 @@ class ChangeProjectState(Resource):
         """Updates a project using form data"""
         try:
             args = ProjectUpdateParser.parse_args()
-            dao.activate(uid, args['active'])
+            update_data = {
+                "active": args["active"]
+            }
+            dao.update(uid, update_data)
             return None, 204
         except ValueError:
             abort(code=400)
