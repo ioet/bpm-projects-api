@@ -33,6 +33,19 @@ Go to the directory of the project
     ```bash
      pip install -r requirements.txt
     ```
+
+#### Current Environments
+There are dependencies for multiple environments:
+* `dev`: Used for development. Tries to simplify complexity in sake of a better understanding of
+the bussiness logic.
+* `prod`: Like `dev` but for production.
+* `azure-dev`: Used for development using real Azure resources, i.e. it connects remotely to try 
+real PaaS provided by Azure, e.g. a Mongo database in Azure Cosmos DB. It requires:
+    - A MongoDB database installed and running in the local pc
+
+* `azure-prod`: Alike to `azure-dev` but for production
+    
+Its highly recommended a virtual environment be created for each configuration.
     
 ### Usage
 

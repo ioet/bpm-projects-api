@@ -28,7 +28,8 @@ class TestingConfig(DevelopmentConfig):
 
 
 class AzureConfig(Config):
-    DATABASE = "azure"
+    DATABASE = "mongodb"
+    MONGO_URI = 'mongodb://localhost:27017/'
 
 
 class AzureDevelopmentConfig(DevelopmentConfig, AzureConfig):

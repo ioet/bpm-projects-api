@@ -24,16 +24,18 @@ project_dao = None
 
 def init_app(app):
     database_strategy_name = app.config['DATABASE']
-    globals()["use_%s" % database_strategy_name]()
+    globals()["use_%s" % database_strategy_name](app)
 
 
-def use_in_memory():
+def use_in_memory(app):
     global project_dao
     from .in_memory import ProjectDAO
     project_dao = ProjectDAO()
 
 
-def use_azure():
+def use_azure(app):
     global project_dao
-    from .azure import ProjectDAO
+    from flask_pymongo import PyMongo
+    from .mongodb import ProjectDAO
+    mongo = PyMongo(app)
     project_dao = ProjectDAO()
