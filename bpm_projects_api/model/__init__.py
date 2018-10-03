@@ -33,9 +33,12 @@ def use_in_memory(app):
     project_dao = ProjectDAO()
 
 
-def use_azure(app):
+def use_mongodb(app):
     global project_dao
-    from flask_pymongo import PyMongo
+    from pymongo import MongoClient
     from .mongodb import ProjectDAO
-    mongo = PyMongo(app)
-    project_dao = ProjectDAO()
+
+    client = MongoClient(app.config["MONGO_URI"])
+    db = client[app.config["DATABASE_NAME"]]
+
+    project_dao = ProjectDAO(db)

@@ -29,11 +29,11 @@ class TestingConfig(DevelopmentConfig):
 
 class AzureConfig(Config):
     DATABASE = "mongodb"
-    MONGO_URI = 'mongodb://localhost:27017/'
+    DATABASE_NAME = 'ioet-bpm'
 
 
 class AzureDevelopmentConfig(DevelopmentConfig, AzureConfig):
-    pass
+    MONGO_URI = 'mongodb://localhost:27017/'
 
 
 class AzureProductionConfig(ProductionConfig, AzureConfig):

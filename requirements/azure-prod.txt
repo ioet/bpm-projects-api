@@ -2,7 +2,10 @@
 
 -r prod.txt
 
+
+# PyMongo
+pymongo==3.7.1
+
 #Integration library for Flask and MongoDB
 Flask-PyMongo==2.1.0
-pymongo==3.7.1
 

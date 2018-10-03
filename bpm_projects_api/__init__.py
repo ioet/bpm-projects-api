@@ -4,17 +4,16 @@ from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 
 
-def create_app(config=None,
-               config_object='bpm_projects_api.config.DevelopmentConfig'):
+def create_app(config_path='bpm_projects_api.config.DevelopmentConfig'):
     """Create and configure an instance of the Flask app."""
     app = Flask(__name__, instance_relative_config=True)
 
     # Needed when using a wsgi server (mainly for production)
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
-    if config_object is not None:
-        app.config.from_object(config_object)
-    elif config is None:
+    if config_path is not None:
+        app.config.from_object(config_path)
+    else:
         # ensure the instance folder exists
         try:
             os.makedirs(app.instance_path)
@@ -23,9 +22,6 @@ def create_app(config=None,
 
         # Located in `/instance`
         app.config.from_pyfile('config.py', silent=True)
-    else:
-        # Used mostly for testing
-        app.config.update(config)
 
     import bpm_projects_api.model as model
     model.init_app(app)

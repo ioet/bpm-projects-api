@@ -45,8 +45,7 @@ class AuthActions:
 @pytest.fixture(scope='session')
 def app():
     """Create and configure a new app instance for each test."""
-    return create_app(config=test_config,
-                      config_object='bpm_projects_api.config.TestingConfig')
+    return create_app('bpm_projects_api.config.TestingConfig')
 
 
 @pytest.fixture(scope='session')

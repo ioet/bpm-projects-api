@@ -3,6 +3,8 @@
 -r dev.txt
 
 
-#Integration library for Flask and MongoDB
-Flask-PyMongo==2.1.0
+# PyMongo
 pymongo==3.7.1
+
+# Integration library for Flask and MongoDB
+Flask-PyMongo==2.1.0
