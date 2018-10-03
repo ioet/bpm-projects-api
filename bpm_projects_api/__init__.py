@@ -27,6 +27,9 @@ def create_app(config=None,
         # Used mostly for testing
         app.config.update(config)
 
+    import bpm_projects_api.model as model
+    model.init_app(app)
+
     from bpm_projects_api.apis import api
     api.init_app(app)
 

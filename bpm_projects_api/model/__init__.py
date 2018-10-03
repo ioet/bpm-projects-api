@@ -1,4 +1,3 @@
-
 class MissingResource(Exception):
     """
     Errors related to missing resource in the system
@@ -20,8 +19,21 @@ class InvalidMatch(Exception):
     pass
 
 
-from .in_memory import ProjectDAO
+project_dao = None
 
-project_dao = ProjectDAO()
 
-__all__ = [project_dao]
+def init_app(app):
+    database_strategy_name = app.config['DATABASE']
+    globals()["use_%s" % database_strategy_name]()
+
+
+def use_in_memory():
+    global project_dao
+    from .in_memory import ProjectDAO
+    project_dao = ProjectDAO()
+
+
+def use_azure():
+    global project_dao
+    from .azure import ProjectDAO
+    project_dao = ProjectDAO()

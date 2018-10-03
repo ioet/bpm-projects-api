@@ -5,7 +5,6 @@ import pytest
 from flask import json
 
 from bpm_projects_api import create_app
-from bpm_projects_api.model import project_dao, MissingResource
 from tests.utils import url_for, open_with_basic_auth, create_sample_project
 
 test_config = {
@@ -43,51 +42,57 @@ class AuthActions:
                                         self._app), follow_redirects=True)
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def app():
     """Create and configure a new app instance for each test."""
     return create_app(config=test_config,
                       config_object='bpm_projects_api.config.TestingConfig')
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def client(app):
     """A test client for the app."""
-    return app.test_client()
+    with app.test_client() as c:
+        return c
 
 
-@pytest.fixture
+@pytest.fixture()
 def user(app):
     """A test user"""
     return User(test_config["TEST_USER"], app.config["USER_PASSWORD"])
 
 
-@pytest.fixture
+@pytest.fixture()
 def api():
     """Projects API"""
     from bpm_projects_api.apis import api
     return api
 
 
-@pytest.fixture
+@pytest.fixture()
 def secret_token_key(app):
     """A secret key to sign JWTs"""
     return app.config["SECRET_KEY"]
 
 
-@pytest.fixture
+@pytest.fixture()
 def auth(app, client):
     return AuthActions(app, client)
 
 
-@pytest.fixture
+@pytest.fixture()
 def auth_token(auth, user):
     response = auth.login(user.username, user.password)
     return json.loads(response.data)["token"]
 
 
-@pytest.yield_fixture(scope="function")
-def sample_project():
-    project = project_dao.create(create_sample_project())
-    yield project
-    project_dao.delete(project["uid"])
+@pytest.yield_fixture()
+def project_dao(app):
+    from bpm_projects_api.model import project_dao
+    yield project_dao
+    project_dao.delete()
+
+
+@pytest.fixture()
+def sample_project(project_dao):
+    return project_dao.create(create_sample_project())

@@ -10,6 +10,9 @@ class ProjectDAO(object):
         self.counter = 0
         self.projects = []
 
+    def get_all(self):
+        return self.projects
+
     def get(self, uid):
         for project in self.projects:
             if project.get('uid') == uid:
@@ -30,9 +33,12 @@ class ProjectDAO(object):
         else:
             raise MissingResource("Project '%s' not found" % uid)
 
-    def delete(self, uid):
-        project = self.get(uid)
-        self.projects.remove(project)
+    def delete(self, uid=None):
+        if (uid):
+            project = self.get(uid)
+            self.projects.remove(project)
+        else:
+            self.projects.clear()
 
     def search(self, search_criteria):
         matching_projects = self.select_matching_projects(search_criteria)

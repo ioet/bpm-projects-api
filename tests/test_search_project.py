@@ -1,6 +1,5 @@
 from flask import json
 
-from bpm_projects_api.apis.project import project_dao
 from tests.utils import create_sample_project
 
 
@@ -33,9 +32,8 @@ def test_search_existing_string(client, auth_token, sample_project):
     assert 200 == response.status_code
 
 
-def test_search_not_existing_string(client, auth_token):
+def test_search_not_existing_string(client, auth_token, project_dao):
     """Searching for a not existing string should return 404"""
-
     search_criteria = {
         'search_string': 'asdf'
     }
@@ -56,7 +54,7 @@ def test_search_not_existing_string(client, auth_token):
     assert 404 == response.status_code
 
 
-def test_search_active_existing(client, auth_token):
+def test_search_active_existing(client, auth_token, project_dao):
     """Searching for an existing active project should return 200"""
 
     search_criteria = {
@@ -93,7 +91,7 @@ def test_search_active_not_existing(client, auth_token):
     assert 404 == response.status_code
 
 
-def test_search_inactive_existing(client, auth_token, sample_project):
+def test_search_inactive_existing(client, auth_token, sample_project, project_dao):
     """Searching for an existing inactive project should return 200"""
     # Given
     project_id = sample_project["uid"];
@@ -123,7 +121,7 @@ def test_search_inactive_not_exising(client, auth_token):
     assert 404 == response.status_code
 
 
-def test_search_string_active_existing(client, auth_token):
+def test_search_string_active_existing(client, auth_token, project_dao):
     """Searching with a string for an active, existing project
     should return 200"""
     search_criteria = {
@@ -162,7 +160,7 @@ def test_search_string_active_not_existing(client, auth_token):
     assert 404 == response.status_code
 
 
-def test_search_string_inactive_existing(client, auth_token, sample_project):
+def test_search_string_inactive_existing(client, auth_token, sample_project, project_dao):
     """Given a valid search_string and active filter, it should return 200"""
     # Given
     search_criteria = {
