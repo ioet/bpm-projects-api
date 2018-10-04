@@ -4,7 +4,6 @@ import os
 class Config:
     DEBUG = False
     OPA_URL = ""
-    DATABASE = "in_memory"
 
 
 class ProductionConfig(Config):
@@ -18,9 +17,10 @@ class DevelopmentConfig(Config):
     SECRET_KEY = "secretkeyfordevelopment"
     USER_PASSWORD = "secret"
     FLASK_ENV = "development"
+    DATABASE = "in_memory"
 
 
-class TestingConfig(DevelopmentConfig):
+class TestConfig(DevelopmentConfig):
     DEBUG = True
     TESTING = True
     SERVER_NAME = "localhost"
@@ -38,3 +38,10 @@ class AzureDevelopmentConfig(DevelopmentConfig, AzureConfig):
 
 class AzureProductionConfig(ProductionConfig, AzureConfig):
     pass
+
+
+class TestAzureDevelopmentConfig(DevelopmentConfig, AzureConfig):
+    DEBUG = True
+    TESTING = True
+    SERVER_NAME = "localhost"
+    TEST_USER = "testuser@domain.com"
