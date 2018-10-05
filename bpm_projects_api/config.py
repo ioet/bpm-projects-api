@@ -29,19 +29,15 @@ class TestConfig(DevelopmentConfig):
 
 class AzureConfig(Config):
     DATABASE = "mongodb"
-    DATABASE_NAME = 'ioet-bpm'
 
 
-class AzureDevelopmentConfig(DevelopmentConfig, AzureConfig):
-    MONGO_URI = 'mongodb://localhost:27017/'
+class AzureDevelopmentConfig(AzureConfig, DevelopmentConfig):
+    MONGO_URI = 'mongodb://localhost:27017/ioet-bpm'
 
 
 class AzureProductionConfig(ProductionConfig, AzureConfig):
-    pass
+    MONGO_URI = os.environ.get('DB_URI')
 
 
-class TestAzureDevelopmentConfig(DevelopmentConfig, AzureConfig):
-    DEBUG = True
-    TESTING = True
-    SERVER_NAME = "localhost"
-    TEST_USER = "testuser@domain.com"
+class TestAzureDevelopmentConfig(AzureConfig, TestConfig):
+    MONGO_URI = 'mongodb://localhost:27017/ioet-bpm-test'

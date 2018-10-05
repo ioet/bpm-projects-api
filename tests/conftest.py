@@ -48,16 +48,20 @@ def app(request):
     """Create and configure a new app instance for each test."""
     app = create_app("bpm_projects_api.config.%s" % request.param)
 
-    reload_modules_of_interest()
+    reload_modules_of_interest(app)
 
     return app
 
 
-def reload_modules_of_interest():
+def reload_modules_of_interest(app):
     """In python 3 modules retain its import state
      so they must be reloaded in order to get the new instances"""
     import bpm_projects_api.apis.project
     reload(bpm_projects_api.apis.project)
+
+    from bpm_projects_api.model import init_db
+    init_db(app)
+
 
 @pytest.fixture
 def client(app):
@@ -100,7 +104,7 @@ def auth_token(auth, user):
 def project_dao():
     from bpm_projects_api.model import project_dao
     yield project_dao
-    project_dao.delete()
+    project_dao.flush()
 
 
 @pytest.fixture

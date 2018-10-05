@@ -1,44 +1,21 @@
-class MissingResource(Exception):
-    """
-    Errors related to missing resource in the system
-    """
-    pass
-
-
-class InvalidInput(Exception):
-    """
-    Errors related to an invalid input coming from the user
-    """
-    pass
-
-
-class InvalidMatch(Exception):
-    """
-    Errors related to an invalid match during a search
-    """
-    pass
-
-
 project_dao = None
+init_db = None
 
 
 def init_app(app):
     database_strategy_name = app.config['DATABASE']
-    globals()["use_%s" % database_strategy_name](app)
+    with app.app_context():
+        module = globals()["use_%s" % database_strategy_name]()
+        global project_dao, init_db
+        init_db = module.init_db
+        project_dao = module.project_dao
 
 
-def use_in_memory(app):
-    global project_dao
-    from .in_memory import ProjectDAO
-    project_dao = ProjectDAO()
+def use_in_memory():
+    import bpm_projects_api.model.in_memory
+    return in_memory
 
 
-def use_mongodb(app):
-    global project_dao
-    from pymongo import MongoClient
-    from .mongodb import ProjectDAO
-
-    client = MongoClient(app.config["MONGO_URI"])
-    db = client[app.config["DATABASE_NAME"]]
-
-    project_dao = ProjectDAO(db)
+def use_mongodb():
+    import bpm_projects_api.model.mongodb
+    return mongodb

@@ -5,7 +5,7 @@ https://flask-restplus.readthedocs.io/en/stable/scaling.html
 from flask import current_app as app
 from flask_restplus import Api
 
-from bpm_projects_api.model import MissingResource, InvalidInput, InvalidMatch
+from bpm_projects_api.model.errors import MissingResource, InvalidMatch, InvalidInput
 from . import project
 from ..core import security
 

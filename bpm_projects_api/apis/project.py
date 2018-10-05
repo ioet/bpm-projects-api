@@ -1,9 +1,9 @@
 from flask_restplus import fields, Resource, Namespace, abort, inputs
 
 from bpm_projects_api.core.security import token_required, token_policies
-from bpm_projects_api.model import project_dao
-
 # Project namespace
+from bpm_projects_api.model import project_dao
+from bpm_projects_api.model.errors import MissingResource
 
 ns = Namespace('projects', description='Operations for projects of the BPM')
 
@@ -56,6 +56,25 @@ class Projects(Resource):
         return project_dao.create(ns.payload), 201
 
 
+@ns.route('/search/')
+@ns.response(404, 'Project not found')
+class SearchProject(Resource):
+    @ns.doc('search_project')
+    @ns.expect(search_model)
+    @ns.marshal_list_with(project, code=200)
+    def post(self):
+        """Search for projects given some criteria(s)"""
+        return project_dao.search(ns.payload)
+
+
+project_update_parser = ns.parser()
+project_update_parser.add_argument('active',
+                                   type=inputs.boolean,
+                                   location='form',
+                                   required=True,
+                                   help='Is the project active?')
+
+
 @ns.route('/<string:uid>')
 @ns.response(404, 'Project not found')
 @ns.param('uid', 'The project identifier')
@@ -82,44 +101,18 @@ class Project(Resource):
         """Create or replace a project"""
         return project_dao.update(uid, ns.payload)
 
-
-@ns.route('/search/')
-@ns.response(404, 'Project not found')
-class SearchProject(Resource):
-    @ns.doc('search_project')
-    @ns.expect(search_model)
-    @ns.marshal_list_with(project, code=200)
-    def post(self):
-        """Search for projects given some criteria(s)"""
-        return project_dao.search(ns.payload)
-
-
-project_update_parser = ns.parser()
-project_update_parser.add_argument('active',
-                                   type=inputs.boolean,
-                                   location='form',
-                                   required=True,
-                                   help='Is the project active?')
-
-
-@ns.route('/<string:uid>')
-@ns.param('uid', 'The project identifier')
-@ns.param('active', 'Is the project active?', 'body')
-@ns.response(404, 'Project not found')
-@ns.response(204, 'State of the project successfully updated')
-@ns.response(400, "Bad parameters input")
-class ChangeProjectState(Resource):
     @ns.doc('update_project_status')
+    @ns.param('uid', 'The project identifier')
+    @ns.response(204, 'State of the project successfully updated')
+    @ns.response(400, "Bad parameters input")
     @ns.expect(project_update_parser)
     @token_policies.administrator_required
     def post(self, uid):
         """Updates a project using form data"""
         try:
-            args = project_update_parser.parse_args()
-            update_data = {
-                "active": args["active"]
-            }
-            project_dao.update(uid, update_data)
-            return None, 204
+            update_data = project_update_parser.parse_args()
+            return project_dao.update(uid, update_data), 200
         except ValueError:
             abort(code=400)
+        except MissingResource as e:
+            abort(message=str(e), code=404)

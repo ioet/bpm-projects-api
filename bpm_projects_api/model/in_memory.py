@@ -1,8 +1,11 @@
 """
 Models' implementations in memory
 """
+from bpm_projects_api.model.errors import MissingResource, InvalidInput, InvalidMatch
 
-from . import MissingResource, InvalidInput, InvalidMatch
+
+def init_db(app):
+    print("No need to initialize a database")
 
 
 class ProjectDAO(object):
@@ -33,12 +36,13 @@ class ProjectDAO(object):
         else:
             raise MissingResource("Project '%s' not found" % uid)
 
-    def delete(self, uid=None):
-        if (uid):
+    def delete(self, uid):
+        if uid:
             project = self.get(uid)
             self.projects.remove(project)
-        else:
-            self.projects.clear()
+
+    def flush(self):
+        self.projects.clear()
 
     def search(self, search_criteria):
         matching_projects = self.select_matching_projects(search_criteria)
@@ -70,3 +74,7 @@ class ProjectDAO(object):
                                  if p['active'] is search_criteria['active']]
 
         return matching_projects
+
+
+# Instances
+project_dao = ProjectDAO()

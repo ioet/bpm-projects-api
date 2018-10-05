@@ -19,8 +19,8 @@ def create_app(config_path='bpm_projects_api.config.DevelopmentConfig',
     return app
 
 
-def init_app_config(app, config_path, config_data):
-    if config_path is not None:
+def init_app_config(app, config_path, config_data=None):
+    if config_path:
         app.config.from_object(config_path)
     else:
         # ensure the instance folder exists

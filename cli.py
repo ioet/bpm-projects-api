@@ -6,7 +6,8 @@ from flask_script import Manager
 from bpm_projects_api import create_app
 from bpm_projects_api.apis import api
 
-app = create_app()
+config = os.environ.get('APP_CONFIG', 'bpm_projects_api.config.DevelopmentConfig')
+app = create_app(config)
 manager = Manager(app)
 
 
@@ -25,6 +26,13 @@ def gen_postman_collection(filename=None):
             print("Error while creating '%s': %s" % filename, err)
     else:
         print(json.dumps(data))
+
+
+@manager.command
+def init_db():
+    """Initializes the database"""
+    from bpm_projects_api.model import init_db
+    init_db(app)
 
 
 if __name__ == "__main__":

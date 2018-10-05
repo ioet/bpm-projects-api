@@ -11,7 +11,8 @@ def test_search_nothing(client, auth_token):
     # When
     response = client.post("/projects/search/",
                            headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                           json=search_criteria,
+                           follow_redirects=True)
 
     # Then
     assert 400 == response.status_code
@@ -30,6 +31,7 @@ def test_search_existing_string(client, auth_token, sample_project):
 
     # Then
     assert 200 == response.status_code
+    assert json.loads(response.data)[0]['uid'] == sample_project['uid']
 
 
 def test_search_not_existing_string(client, auth_token, project_dao):
