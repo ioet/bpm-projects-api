@@ -1,7 +1,8 @@
 """
 Models' implementations in memory
 """
-from bpm_projects_api.model.errors import MissingResource, InvalidInput, InvalidMatch
+from bpm_projects_api.model.errors \
+    import MissingResource, InvalidInput, InvalidMatch
 
 
 def init_db(app):

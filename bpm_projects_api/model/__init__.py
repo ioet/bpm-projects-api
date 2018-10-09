@@ -12,10 +12,10 @@ def init_app(app):
 
 
 def use_in_memory():
-    import bpm_projects_api.model.in_memory
-    return in_memory
+    import bpm_projects_api.model.in_memory as module
+    return module
 
 
 def use_mongodb():
-    import bpm_projects_api.model.mongodb
-    return mongodb
+    import bpm_projects_api.model.mongodb as module
+    return module

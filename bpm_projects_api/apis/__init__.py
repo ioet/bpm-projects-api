@@ -5,7 +5,8 @@ https://flask-restplus.readthedocs.io/en/stable/scaling.html
 from flask import current_app as app
 from flask_restplus import Api
 
-from bpm_projects_api.model.errors import MissingResource, InvalidMatch, InvalidInput
+from bpm_projects_api.model.errors \
+    import MissingResource, InvalidMatch, InvalidInput
 from . import project
 from ..core import security
 
@@ -30,7 +31,6 @@ def handle_not_found_exceptions(e):
 def handle_no_match_exceptions(e):
     """Return a 204 status code error"""
     return {'message': str(e)}, 204
-
 
 
 @api.errorhandler(InvalidInput)

@@ -8,7 +8,8 @@ from flask import current_app
 from flask_pymongo import PyMongo
 from pymongo import ReturnDocument
 
-from bpm_projects_api.model.errors import MissingResource, InvalidInput, InvalidMatch
+from bpm_projects_api.model.errors \
+    import MissingResource, InvalidInput, InvalidMatch
 
 mongo = PyMongo(current_app)
 
