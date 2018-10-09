@@ -33,7 +33,7 @@ class ProjectDAO(object):
         ProjectDAO.collection.create_index([
             ('name', pymongo.TEXT),
             ('comments', pymongo.TEXT),
-            ('properties_table.content', pymongo.TEXT),
+            ('properties.content', pymongo.TEXT),
         ], name='search_index', default_language='english')
 
     def get_all(self):
