@@ -103,7 +103,7 @@ class ProjectDAO(object):
             mongo_search_order = {'score': {'$meta': 'textScore'}}
 
         is_active = search_criteria.get('active')
-        if is_active:
+        if is_active is not None:
             mongo_search_criteria.update({
                 'is_active': is_active,
             })

@@ -79,11 +79,12 @@ def test_search_active_not_existing(client, auth_token):
     assert 204 == response.status_code
 
 
-def test_search_inactive_existing(client, auth_token, sample_project, project_dao):
+def test_search_inactive_existing(client, auth_token, sample_project, another_project, project_dao):
     """Searching for an existing inactive project should return 200"""
     # Given
-    project_id = sample_project["uid"];
-    project_dao.update(project_id, {"active": False})
+    inactive_project_id = another_project["uid"];
+    project_dao.update(inactive_project_id, {"active": False})
+
     search_criteria = {'active': False}
 
     # When
@@ -92,7 +93,9 @@ def test_search_inactive_existing(client, auth_token, sample_project, project_da
                            json=search_criteria, follow_redirects=True)
 
     # Then
-    assert json.loads(response.data)[0]['uid'] == project_id
+    response_json = json.loads(response.data)
+    assert 1 == len(response_json)
+    assert response_json[0]['uid'] == inactive_project_id
     assert 200 == response.status_code
 
 

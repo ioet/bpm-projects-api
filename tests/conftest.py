@@ -110,3 +110,6 @@ def project_dao():
 @pytest.fixture
 def sample_project(project_dao):
     return project_dao.create(create_sample_project())
+
+
+another_project = sample_project
