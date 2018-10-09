@@ -8,7 +8,7 @@ from flask import current_app
 from flask_pymongo import PyMongo
 from pymongo import ReturnDocument
 
-from bpm_projects_api.model.errors import MissingResource
+from bpm_projects_api.model.errors import MissingResource, InvalidInput, InvalidMatch
 
 mongo = PyMongo(current_app)
 
@@ -28,8 +28,11 @@ class ProjectDAO(object):
 
     @staticmethod
     def create_indexes():
+        ProjectDAO.collection.drop_index('search_index')
         ProjectDAO.collection.create_index([
-            ('short_name', pymongo.TEXT),
+            ('name', pymongo.TEXT),
+            ('comments', pymongo.TEXT),
+            ('properties_table.content', pymongo.TEXT),
         ], name='search_index', default_language='english')
 
     def get_all(self):
@@ -81,6 +84,9 @@ class ProjectDAO(object):
         self.collection.delete_many({})
 
     def search(self, search_criteria):
+        if not search_criteria:
+            raise InvalidInput("No search criteria specified")
+
         mongo_search_criteria = dict()
         mongo_search_order = None
 
@@ -93,19 +99,24 @@ class ProjectDAO(object):
                     '$diacriticSensitive': True
                 },
             })
+            mongo_search_order = {'score': {'$meta': 'textScore'}}
 
         is_active = search_criteria.get('active')
         if is_active:
             mongo_search_criteria.update({
                 'is_active': is_active,
-            }, {'score': {'$meta': 'textScore'}})
+            })
 
         cursor = self.collection.find(mongo_search_criteria, mongo_search_order)
 
         if query_str:
             cursor.sort([('score', {'$meta': 'textScore'})])
 
-        return list(cursor)
+        result = list(map(convert_from_db, cursor))
+        if not result:
+            raise InvalidMatch("No project matched the specified criteria")
+
+        return result
 
 
 def convert_to_db(project_json):

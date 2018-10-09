@@ -21,10 +21,16 @@ api.add_namespace(project.ns)
 
 
 @api.errorhandler(MissingResource)
-@api.errorhandler(InvalidMatch)
 def handle_not_found_exceptions(e):
     """Return a 404 status code error"""
     return {'message': str(e)}, 404
+
+
+@api.errorhandler(InvalidMatch)
+def handle_no_match_exceptions(e):
+    """Return a 204 status code error"""
+    return {'message': str(e)}, 204
+
 
 
 @api.errorhandler(InvalidInput)

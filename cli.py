@@ -9,6 +9,7 @@ from bpm_projects_api.apis import api
 config = os.environ.get('APP_CONFIG', 'bpm_projects_api.config.DevelopmentConfig')
 app = create_app(config)
 manager = Manager(app)
+print("BPM Projects API created for configuration '%s'" % config)
 
 
 @manager.command
