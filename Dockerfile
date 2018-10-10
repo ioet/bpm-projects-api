@@ -9,12 +9,11 @@ RUN apt-get install -y python3 python3-dev python3-pip
 RUN apt-get install -y curl
 
 # Add requirements.txt before rest of repo for caching
-ADD requirements/prod.txt /app/requirements/
-ADD requirements/azure-prod.txt /app/requirements/
+ADD requirements/*.txt /app/requirements/
 
 WORKDIR /app
 
-RUN pip3 install -r requirements/azure-prod.txt
+RUN pip3 install -r requirements/azure-dev.txt
 
 ADD . /app
 
