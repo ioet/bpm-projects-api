@@ -1,3 +1,4 @@
 # requirements/azure-dev.txt
 
+-r dev.txt
 -r azure-prod.txt

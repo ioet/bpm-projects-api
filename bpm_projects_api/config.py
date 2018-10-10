@@ -36,6 +36,7 @@ class AzureDevelopmentConfig(AzureConfig, DevelopmentConfig):
 
 
 class AzureProductionConfig(ProductionConfig, AzureConfig):
+    DEBUG = False
     MONGO_URI = os.environ.get('DB_URI')
 
 
