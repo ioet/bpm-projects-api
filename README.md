@@ -57,11 +57,12 @@ Run the project using
     export FLASK_ENV=development
     ```
 
-1. Run the `run` script corresponding to your OS:
+1. Run the app with one of the following commands:
 
-    * `source run.sh` for Unix based OS
-    * `start run.bat` for Windows
-    *  `python -m bpm_projects_api` thanks to the `__main__.py`
+    * `python3 -m bpm_projects_api` thanks to the `__main__.py`
+    * `gunicorn -b 0.0.0.0:8000 run:app`
+    
+    
 
 What it basically does is to set the `FLASK_APP` env variable to the main package and run the app using `Flask`.
 If you are using an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
