@@ -1,4 +1,5 @@
 import os
+import sys
 
 from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
@@ -48,6 +49,9 @@ def init_app(app):
 
     if app.config.get('DEBUG'):
         add_debug_toolbar(app)
+
+    if app.config.get('FLASK_ENV') == 'production':
+        sys.stdout = open('~/bpm-projects-api.log', 'w')
 
 
 def add_debug_toolbar(app):

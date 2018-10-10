@@ -14,6 +14,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    FLASK_DEBUG = True
     SECRET_KEY = "secretkeyfordevelopment"
     USER_PASSWORD = "secret"
     FLASK_ENV = "development"
@@ -41,4 +42,5 @@ class AzureProductionConfig(ProductionConfig, AzureConfig):
 
 
 class TestAzureDevelopmentConfig(AzureConfig, TestConfig):
+    FLASK_DEBUG = True
     MONGO_URI = 'mongodb://localhost:27017/ioet-bpm-test'

@@ -6,7 +6,7 @@ from bpm_projects_api.model.errors \
 
 
 def init_db(app):
-    print("No need to initialize a database")
+    app.logger.warn("No need to initialize a database")
 
 
 class ProjectDAO(object):
