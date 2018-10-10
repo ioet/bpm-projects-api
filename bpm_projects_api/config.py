@@ -37,10 +37,9 @@ class AzureDevelopmentConfig(AzureConfig, DevelopmentConfig):
 
 
 class AzureProductionConfig(ProductionConfig, AzureConfig):
-    DEBUG = False
+    DEBUG = True
     MONGO_URI = os.environ.get('DB_URI')
 
 
 class TestAzureDevelopmentConfig(AzureConfig, TestConfig):
-    FLASK_DEBUG = True
     MONGO_URI = 'mongodb://localhost:27017/ioet-bpm-test'

@@ -51,8 +51,7 @@ def init_app(app):
         add_debug_toolbar(app)
 
     if app.config.get('FLASK_ENV') == 'production':
-        sys.stdout = open('~/bpm-projects-api.log', 'w')
-
+        sys.stdout = sys.stderr = open('bpm-projects-api.log', 'wt')
 
 def add_debug_toolbar(app):
     app.config['DEBUG_TB_PANELS'] = (

@@ -13,12 +13,12 @@ ADD requirements/*.txt /app/requirements/
 
 WORKDIR /app
 
-RUN pip3 install -r requirements/azure-dev.txt
+RUN pip3 install -r requirements/azure-prod.txt
 
 ADD . /app
 
 ENV FLASK_APP bpm_projects_api
-ENV APP_CONFIG bpm_projects_api.config.AzureDevelopmentConfig
+ENV APP_CONFIG bpm_projects_api.config.AzureProductionConfig
 ENV FLASK_ENV production
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
