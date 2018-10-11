@@ -34,6 +34,7 @@ class AzureConfig(Config):
 
 class AzureDevelopmentConfig(AzureConfig, DevelopmentConfig):
     MONGO_URI = 'mongodb://localhost:27017/ioet-bpm'
+    INDEXES_ALLOWED = True
 
 
 class AzureProductionConfig(ProductionConfig, AzureConfig):
@@ -43,3 +44,4 @@ class AzureProductionConfig(ProductionConfig, AzureConfig):
 
 class TestAzureDevelopmentConfig(AzureConfig, TestConfig):
     MONGO_URI = 'mongodb://localhost:27017/ioet-bpm-test'
+    INDEXES_ALLOWED = True

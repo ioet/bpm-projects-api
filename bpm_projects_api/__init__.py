@@ -53,6 +53,7 @@ def init_app(app):
     if app.config.get('FLASK_ENV') == 'production':
         sys.stdout = sys.stderr = open('bpm-projects-api.log', 'wt')
 
+
 def add_debug_toolbar(app):
     app.config['DEBUG_TB_PANELS'] = (
         'flask_debugtoolbar.panels.versions.VersionDebugPanel',

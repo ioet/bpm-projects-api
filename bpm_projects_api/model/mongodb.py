@@ -17,8 +17,9 @@ mongo = PyMongo(current_app)
 def init_db(app):
     app.logger.info("Installing MongoDB database...")
     # Indexes
-    app.logger.info("Creating indexes...")
-    ProjectDAO.create_indexes(app)
+    if app.config.get('INDEXES_ALLOWED'):
+        app.logger.info("Creating indexes...")
+        ProjectDAO.create_indexes(app)
 
 
 class ProjectDAO(object):
@@ -29,12 +30,11 @@ class ProjectDAO(object):
 
     @staticmethod
     def create_indexes(app):
-        if app.config.get('INDEXES_ALLOWED'):
-            ProjectDAO.collection.create_index([
-                ('name', pymongo.TEXT),
-                ('comments', pymongo.TEXT),
-                ('properties.content', pymongo.TEXT),
-            ], name='search_index', default_language='english')
+        ProjectDAO.collection.create_index([
+            ('name', pymongo.TEXT),
+            ('comments', pymongo.TEXT),
+            ('properties.content', pymongo.TEXT),
+        ], name='search_index', default_language='english')
 
     def get_all(self):
         entries = self.collection.find()
