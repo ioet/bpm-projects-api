@@ -19,3 +19,8 @@ def use_in_memory():
 def use_mongodb():
     import bpm_projects_api.model.mongodb as module
     return module
+
+
+def use_mongodb_cosmosdb():
+    import bpm_projects_api.model.mongodb_cosmosdb as module
+    return module

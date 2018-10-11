@@ -82,7 +82,7 @@ def login():
 
     if auth and auth.password == app.config.get("USER_PASSWORD", ""):
         # Generates a JWToken
-        expiration_time = datetime.utcnow() + timedelta(seconds=600)
+        expiration_time = datetime.utcnow() + timedelta(seconds=app.config.get('TOKEN_TTL', 3600))
         token = jwt.encode({
             'iss': "ioet.com",
             'sub': auth.username,

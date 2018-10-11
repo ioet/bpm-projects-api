@@ -26,4 +26,4 @@ ENV DB_URI $DB_URI
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-b 0.0.0.0:8000", "run:app"]
+CMD []

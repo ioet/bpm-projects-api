@@ -4,6 +4,8 @@ import os
 class Config:
     DEBUG = False
     OPA_URL = ""
+    TOKEN_TTL = 3600
+    FLASK_DEBUG = True
 
 
 class ProductionConfig(Config):
@@ -12,7 +14,7 @@ class ProductionConfig(Config):
     FLASK_ENV = "production"
 
 
-class DevelopmentConfig(Config):
+class InMemoryDevelopmentConfig(Config):
     DEBUG = True
     FLASK_DEBUG = True
     SECRET_KEY = "secretkeyfordevelopment"
@@ -21,27 +23,45 @@ class DevelopmentConfig(Config):
     DATABASE = "in_memory"
 
 
-class TestConfig(DevelopmentConfig):
+class LocalMongoDBDevelopmentConfig(Config):
+    DEBUG = True
+    SECRET_KEY = "secretkeyfordevelopment"
+    USER_PASSWORD = "secret"
+    FLASK_ENV = "development"
+    DATABASE = "mongodb"
+
+
+class TestConfig(InMemoryDevelopmentConfig):
     DEBUG = True
     TESTING = True
     SERVER_NAME = "localhost"
     TEST_USER = "testuser@domain.com"
+    SECRET_KEY = "secretkeyfordevelopment"
+    USER_PASSWORD = "secret"
+    FLASK_ENV = "development"
+    DATABASE = "in_memory"
 
 
 class AzureConfig(Config):
-    DATABASE = "mongodb"
+    DATABASE = "mongodb_cosmosdb"
+    MONGO_URI = os.environ.get('DB_URI')
+    FLASK_DEBUG = False
 
 
-class AzureDevelopmentConfig(AzureConfig, DevelopmentConfig):
-    MONGO_URI = 'mongodb://localhost:27017/ioet-bpm'
-    INDEXES_ALLOWED = True
+class AzureDevelopmentConfig(AzureConfig, LocalMongoDBDevelopmentConfig):
+    pass
 
 
 class AzureProductionConfig(ProductionConfig, AzureConfig):
     DEBUG = True
-    MONGO_URI = os.environ.get('DB_URI')
+    SECRET_KEY = os.urandom(16)
+    USER_PASSWORD = "secret"
+    FLASK_ENV = "production"
 
 
-class TestAzureDevelopmentConfig(AzureConfig, TestConfig):
+class TestAzureConfig(AzureConfig, TestConfig):
+    pass
+
+
+class TestLocalMongoDBConfig(LocalMongoDBDevelopmentConfig, TestConfig):
     MONGO_URI = 'mongodb://localhost:27017/ioet-bpm-test'
-    INDEXES_ALLOWED = True

@@ -9,7 +9,7 @@ from flask import json
 from bpm_projects_api import create_app
 from tests.utils import url_for, open_with_basic_auth, create_sample_project
 
-CONFIGURATIONS = ['TestConfig', 'TestAzureDevelopmentConfig']
+CONFIGURATIONS = ['TestConfig', 'TestAzureConfig']
 
 TEST_USER = {
     "name": "testuser@domain.com",
@@ -56,6 +56,9 @@ def app(request):
 def reload_modules_of_interest(app):
     """In python 3 modules retain its import state
      so they must be reloaded in order to get the new instances"""
+    import bpm_projects_api.apis
+    reload(bpm_projects_api.apis)
+
     import bpm_projects_api.apis.project
     reload(bpm_projects_api.apis.project)
 
