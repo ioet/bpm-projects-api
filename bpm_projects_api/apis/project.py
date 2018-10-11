@@ -1,5 +1,6 @@
 from flask_restplus import fields, Resource, Namespace, abort, inputs
 
+from bpm_projects_api.apis.utils import query_str
 from bpm_projects_api.core.security import token_required, token_policies
 # Project namespace
 from bpm_projects_api.model import project_dao
@@ -27,16 +28,6 @@ project = ns.model('Project', {
                                          'or not')
 })
 
-# Search model
-search_model = ns.model('SearchCriteria', {
-    'search_string': fields.String(
-        title='Keywords',
-        description='What you want to search for in the comments/the name'
-    ),
-    'active': fields.Boolean(title='Is active?',
-                             description='true|false the project is active'),
-})
-
 
 @ns.route('/')
 class Projects(Resource):
@@ -56,21 +47,32 @@ class Projects(Resource):
         return project_dao.create(ns.payload), 201
 
 
+search_parser = ns.parser()
+search_parser.add_argument('search_string',
+                           type=query_str(3, 100),
+                           help='Text to search in the project')
+search_parser.add_argument('active',
+                           help='Is active?',
+                           type=inputs.boolean)
+
+
 @ns.route('/search/')
-@ns.response(404, 'Project not found')
+@ns.response(204, 'No match for your search')
+@ns.response(400, "Bad input of search parameters")
 class SearchProject(Resource):
     @ns.doc('search_project')
-    @ns.expect(search_model)
+    @ns.expect(search_parser)
     @ns.marshal_list_with(project, code=200)
-    def post(self):
+    def get(self):
         """Search for projects given some criteria(s)"""
-        return project_dao.search(ns.payload)
+        search_data = search_parser.parse_args()
+        return project_dao.search(search_data)
 
 
 project_update_parser = ns.parser()
 project_update_parser.add_argument('active',
                                    type=inputs.boolean,
-                                   location='form',
+                                   location='url',
                                    required=True,
                                    help='Is the project active?')
 
