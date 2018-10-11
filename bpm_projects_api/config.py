@@ -29,6 +29,7 @@ class LocalMongoDBDevelopmentConfig(Config):
     USER_PASSWORD = "secret"
     FLASK_ENV = "development"
     DATABASE = "mongodb"
+    MONGO_URI = 'mongodb://localhost:27017/ioet-bpm'
 
 
 class TestConfig(InMemoryDevelopmentConfig):

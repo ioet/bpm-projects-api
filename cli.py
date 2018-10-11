@@ -6,7 +6,8 @@ from flask_script import Manager
 from bpm_projects_api import create_app
 from bpm_projects_api.apis import api
 
-config = os.environ.get('APP_CONFIG', 'bpm_projects_api.config.DevelopmentConfig')
+config = os.environ.get('APP_CONFIG',
+                        'bpm_projects_api.config.InMemoryDevelopmentConfig')
 app = create_app(config)
 manager = Manager(app)
 print("BPM Projects API created for configuration '%s'" % config)
