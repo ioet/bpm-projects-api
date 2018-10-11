@@ -84,7 +84,10 @@ class ProjectDAO(object):
     def flush(self):
         self.collection.delete_many({})
 
-    def search(self, search_criteria):
+    def search(self, user_search_criteria):
+        search_criteria = {k: v for k, v
+                           in user_search_criteria.items()
+                           if v is not None}
         if not search_criteria:
             raise InvalidInput("No search criteria specified")
 

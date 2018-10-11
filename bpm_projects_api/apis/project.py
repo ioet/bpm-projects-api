@@ -63,6 +63,7 @@ class SearchProject(Resource):
     @ns.doc('search_project')
     @ns.expect(search_parser)
     @ns.marshal_list_with(project, code=200)
+    @token_policies.administrator_required
     def get(self):
         """Search for projects given some criteria(s)"""
         search_data = search_parser.parse_args()
@@ -72,7 +73,7 @@ class SearchProject(Resource):
 project_update_parser = ns.parser()
 project_update_parser.add_argument('active',
                                    type=inputs.boolean,
-                                   location='url',
+                                   location='form',
                                    required=True,
                                    help='Is the project active?')
 
