@@ -1,7 +1,7 @@
 """
 Global fixtures
 """
-from imp import reload
+from importlib import reload
 
 import pytest
 from flask import json
@@ -9,7 +9,7 @@ from flask import json
 from bpm_projects_api import create_app
 from tests.utils import url_for, open_with_basic_auth, create_sample_project
 
-CONFIGURATIONS = ['TestConfig', 'TestAzureConfig']
+CONFIGURATIONS = ['TestConfig', 'TestLocalMongoDBConfig']
 
 TEST_USER = {
     "name": "testuser@domain.com",

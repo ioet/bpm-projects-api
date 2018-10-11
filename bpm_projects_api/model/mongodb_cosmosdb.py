@@ -20,7 +20,6 @@ class ProjectDAO(ProjectDaoMongoDB):
             raise InvalidInput("No search criteria specified")
 
         mongo_search_criteria = dict()
-        mongo_search_order = None
 
         query_str = search_criteria.get('search_string')
         if query_str:
