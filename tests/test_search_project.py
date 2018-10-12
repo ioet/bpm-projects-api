@@ -32,7 +32,7 @@ def test_search_existing_string(client, auth_token, sample_project):
     assert json.loads(response.data)[0]['uid'] == sample_project['uid']
 
 
-def test_search_not_existing_string(client, auth_token, sample_project):
+def test_search_non_existing_string(client, auth_token, sample_project):
     """Searching for a not existing string should return 204"""
     # Given
     search_criteria = {'search_string': 'non matching test'}
@@ -63,7 +63,7 @@ def test_search_active_existing(client, auth_token, sample_project):
     assert 200 == response.status_code
 
 
-def test_search_active_not_existing(client, auth_token):
+def test_search_active_non_existing(client, auth_token):
     """Searching for a not existing active project should return 204"""
 
     search_criteria = {
@@ -77,7 +77,7 @@ def test_search_active_not_existing(client, auth_token):
     assert 204 == response.status_code
 
 
-def test_search_inactive_existing(client, auth_token, sample_project, another_project, project_dao):
+def test_search_existing_inactive(client, auth_token, sample_project, another_project, project_dao):
     """Searching for an existing inactive project should return 200"""
     # Given
     inactive_project_id = another_project["uid"];
@@ -97,7 +97,7 @@ def test_search_inactive_existing(client, auth_token, sample_project, another_pr
     assert 200 == response.status_code
 
 
-def test_search_inactive_not_exising(client, auth_token):
+def test_search_non_existing_inactive(client, auth_token):
     """Searching for an inactive not existing project should return 404"""
     search_criteria = {
         'active': False
@@ -110,7 +110,7 @@ def test_search_inactive_not_exising(client, auth_token):
     assert 404 == response.status_code
 
 
-def test_search_string_active_existing(client, auth_token, sample_project):
+def test_search_string_existing_active(client, auth_token, sample_project):
     """Searching with a string for an active, existing project
     should return 200"""
     # Given
@@ -129,7 +129,7 @@ def test_search_string_active_existing(client, auth_token, sample_project):
     assert 200 == response.status_code
 
 
-def test_search_string_active_not_existing(client, auth_token):
+def test_search_string_non_existing_active(client, auth_token):
     """Searching with a string for an active, not existing project
     should return 204"""
     search_criteria = {
@@ -164,7 +164,7 @@ def test_search_string_inactive_existing(client, auth_token, sample_project, pro
     assert 200 == response.status_code
 
 
-def test_search_not_existing_string_inactive(client, auth_token):
+def test_search_string_non_existing_inactive(client, auth_token):
     """Searching with a string for an inactive, not existing project
     should return 204"""
 

@@ -9,7 +9,7 @@ from flask import json
 from bpm_projects_api import create_app
 from tests.utils import url_for, open_with_basic_auth, create_sample_project
 
-CONFIGURATIONS = ['TestConfig', 'TestLocalMongoDBConfig']
+CONFIGURATIONS = ['TestConfig', 'TestLocalMongoDBConfig', 'TestAzureConfig']
 
 TEST_USER = {
     "name": "testuser@domain.com",
@@ -39,8 +39,8 @@ class AuthActions:
                                     password)
 
     def logout(self):
-        return self._client.get(url_for("security.logout",
-                                        self._app), follow_redirects=True)
+        return self._client.get(url_for("security.logout", self._app),
+                                follow_redirects=True)
 
 
 @pytest.fixture(scope='session', params=CONFIGURATIONS)
@@ -112,7 +112,9 @@ def project_dao():
 
 @pytest.fixture
 def sample_project(project_dao):
-    return project_dao.create(create_sample_project())
+    return project_dao.create(create_sample_project("0001"))
 
 
-another_project = sample_project
+@pytest.fixture
+def another_project(project_dao):
+    return project_dao.create(create_sample_project("0002"))
