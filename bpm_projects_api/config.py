@@ -45,8 +45,11 @@ class TestConfig(InMemoryDevelopmentConfig):
 
 class AzureConfig(Config):
     DATABASE = "mongodb_cosmosdb"
+    OPA_URL = ""
+    TOKEN_TTL = 3600
     MONGO_URI = os.environ.get('DB_URI')
     FLASK_DEBUG = False
+    DEBUG = False
 
 
 class AzureDevelopmentConfig(AzureConfig, LocalMongoDBDevelopmentConfig):
@@ -55,9 +58,6 @@ class AzureDevelopmentConfig(AzureConfig, LocalMongoDBDevelopmentConfig):
 
 class AzureProductionConfig(AzureConfig, ProductionConfig):
     DEBUG = True
-    SECRET_KEY = os.urandom(16)
-    USER_PASSWORD = "secret"
-    FLASK_ENV = "production"
 
 
 class TestAzureConfig(AzureConfig, TestConfig):
