@@ -53,7 +53,7 @@ class AzureDevelopmentConfig(AzureConfig, LocalMongoDBDevelopmentConfig):
     pass
 
 
-class AzureProductionConfig(ProductionConfig, AzureConfig):
+class AzureProductionConfig(AzureConfig, ProductionConfig):
     DEBUG = True
     SECRET_KEY = os.urandom(16)
     USER_PASSWORD = "secret"
