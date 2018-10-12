@@ -21,6 +21,7 @@ class InMemoryDevelopmentConfig(Config):
     USER_PASSWORD = "secret"
     FLASK_ENV = "development"
     DATABASE = "in_memory"
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS')
 
 
 class LocalMongoDBDevelopmentConfig(Config):
@@ -53,11 +54,13 @@ class AzureConfig(Config):
 
 
 class AzureDevelopmentConfig(AzureConfig, LocalMongoDBDevelopmentConfig):
-    pass
+    CORS_ORIGINS = "*"
 
 
 class AzureProductionConfig(AzureConfig, ProductionConfig):
-    DEBUG = True
+    DEBUG = False
+    FLASK_DEBUG = False
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS')
 
 
 class TestAzureConfig(AzureConfig, TestConfig):

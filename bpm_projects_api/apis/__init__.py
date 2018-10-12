@@ -48,7 +48,7 @@ def handle_duplicated_elements_exceptions(e):
 
 @api.errorhandler
 def default_error_handler(e):
-    if app.config.get("FLASK_DEBUG", False):
+    if not app.config.get("FLASK_DEBUG", False):
         app.logger.error(e)
         return {'message': 'An unhandled exception occurred.'}, 500
 

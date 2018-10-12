@@ -1,7 +1,8 @@
 BPM Projects API
 ================
 [![Build Status](https://travis-ci.com/ioet/bpm-projects-api.svg?branch=master)](https://travis-ci.com/ioet/bpm-projects-api)
-[![Build Status](https://dev.azure.com/ioet-bpm/bpm-projects-api/_apis/build/status/bpm-projects-api-Docker%20container-CI-CD)](https://dev.azure.com/ioet-bpm/bpm-projects-api/_build/latest?definitionId=7)
+[![Build status](https://dev.azure.com/ioet-bpm/bpm-projects-api/_apis/build/status/bpm-projects-api-Docker%20container-CI-CD)](https://dev.azure.com/ioet-bpm/bpm-projects-api/_build/latest?definitionId=7)
+![Deployment Status](https://vsrm.dev.azure.com/ioet-bpm/_apis/public/Release/badge/53b8ced8-7634-483b-bf19-342d77b2f07a/2/2)
 
 API for BPM Projects
 

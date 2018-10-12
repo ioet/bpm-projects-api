@@ -7,4 +7,4 @@ from bpm_projects_api import create_app
 config = os.environ.get('APP_CONFIG', 'bpm_projects_api.config.ProductionConfig')
 
 app = create_app(config)
-print("BPM Projects API server is running")
+print("BPM Projects API server was created")

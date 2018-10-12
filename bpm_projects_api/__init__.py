@@ -44,6 +44,13 @@ def init_app(app):
     from bpm_projects_api.apis import api
     api.init_app(app)
 
+    cors_origins = app.config.get('CORS_ORIGINS')
+    if cors_origins:
+        from flask_cors import CORS
+        cors_origins_list = cors_origins.split(",")
+        CORS(app, resources={r"/*": {"origins": cors_origins_list}})
+        app.logger.info("Allowing CORS access to [%s]" % cors_origins)
+
     from bpm_projects_api.core import security
     app.register_blueprint(security.ns)  # Security endpoints
 
