@@ -1,13 +1,11 @@
 from flask import json
 
-from bpm_projects_api.apis.project import dao as projects_dao
 
-
-def test_activate_inactive(client, auth_token, sample_project):
+def test_activate_inactive(client, auth_token, sample_project, project_dao):
     """Activating an inactive project sets active to True, returns 204"""
     # Given
     project_id = sample_project["uid"];
-    projects_dao.update(project_id, {"active": False})
+    project_dao.update(project_id, {"active": False})
 
     # When
     response = client.post("/projects/%s" % project_id,
@@ -16,9 +14,9 @@ def test_activate_inactive(client, auth_token, sample_project):
                            follow_redirects=True)
 
     # Then
-    saved_project = json.loads(client.get("/projects/%s" % project_id).data)
-    assert saved_project['active'] is True
-    assert 204 == response.status_code
+    update_project = project_dao.get(project_id)
+    assert update_project['active'] is True
+    assert 200 == response.status_code
 
 
 def test_deactivating_active(client, auth_token, sample_project):
@@ -35,11 +33,13 @@ def test_deactivating_active(client, auth_token, sample_project):
     # Then
     saved_project = json.loads(client.get("/projects/%s" % project_id).data)
     assert saved_project['active'] is False
-    assert 204 == response.status_code
+    assert 200 == response.status_code
 
 
-def test_deactivate_not_existing(client, auth_token):
+def test_deactivate_not_existing_project(client, auth_token, sample_project):
     """Deactivating a not existing project returns 404"""
+    # Given
+    assert sample_project
     # When
     response = client.post("/projects/%s" % 789,
                            data={'active': True},

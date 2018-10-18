@@ -1,19 +1,19 @@
 """
 Global fixtures
 """
+from importlib import reload
+
 import pytest
 from flask import json
 
 from bpm_projects_api import create_app
-from bpm_projects_api.apis.project import dao
 from tests.utils import url_for, open_with_basic_auth, create_sample_project
 
-test_config = {
-    "TESTING": True,
-    "SECRET_KEY": "secretkeyfordevelopment",
-    "USER_PASSWORD": "secret",
-    "SERVER_NAME": "localhost",
-    "TEST_USER": "testuser@domain.com"
+CONFIGURATIONS = ['TestConfig', 'TestLocalMongoDBConfig', 'TestAzureConfig']
+
+TEST_USER = {
+    "name": "testuser@domain.com",
+    "password": "secret"
 }
 
 
@@ -30,8 +30,8 @@ class AuthActions:
         self._app = app
         self._client = client
 
-    def login(self, username=test_config["TEST_USER"],
-              password=test_config["USER_PASSWORD"]):
+    def login(self, username=TEST_USER["name"],
+              password=TEST_USER["password"]):
         login_url = url_for("security.login", self._app)
         return open_with_basic_auth(self._client,
                                     login_url,
@@ -39,27 +39,44 @@ class AuthActions:
                                     password)
 
     def logout(self):
-        return self._client.get(url_for("security.logout",
-                                        self._app), follow_redirects=True)
+        return self._client.get(url_for("security.logout", self._app),
+                                follow_redirects=True)
 
 
-@pytest.fixture
-def app():
+@pytest.fixture(scope='session', params=CONFIGURATIONS)
+def app(request):
     """Create and configure a new app instance for each test."""
-    return create_app(config=test_config,
-                      config_object='bpm_projects_api.config.TestingConfig')
+    app = create_app("bpm_projects_api.config.%s" % request.param)
+
+    reload_modules_of_interest(app)
+
+    return app
+
+
+def reload_modules_of_interest(app):
+    """In python 3 modules retain its import state
+     so they must be reloaded in order to get the new instances"""
+    import bpm_projects_api.apis
+    reload(bpm_projects_api.apis)
+
+    import bpm_projects_api.apis.project
+    reload(bpm_projects_api.apis.project)
+
+    from bpm_projects_api.model import init_db
+    init_db(app)
 
 
 @pytest.fixture
 def client(app):
     """A test client for the app."""
-    return app.test_client()
+    with app.test_client() as c:
+        return c
 
 
 @pytest.fixture
 def user(app):
     """A test user"""
-    return User(test_config["TEST_USER"], app.config["USER_PASSWORD"])
+    return User(TEST_USER["name"], TEST_USER["password"])
 
 
 @pytest.fixture
@@ -86,8 +103,18 @@ def auth_token(auth, user):
     return json.loads(response.data)["token"]
 
 
-@pytest.yield_fixture(scope="function")
-def sample_project():
-    project = dao.create(create_sample_project())
-    yield project
-    dao.delete(project["uid"])
+@pytest.yield_fixture
+def project_dao():
+    from bpm_projects_api.model import project_dao
+    yield project_dao
+    project_dao.flush()
+
+
+@pytest.fixture
+def sample_project(project_dao):
+    return project_dao.create(create_sample_project("0001"))
+
+
+@pytest.fixture
+def another_project(project_dao):
+    return project_dao.create(create_sample_project("0002"))

@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env*/
 
 build/
 develop-eggs/
@@ -30,6 +29,9 @@ var/
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+
+# Logs
+*.log
 
 # Installer logs
 pip-log.txt
@@ -64,6 +66,9 @@ instance/
 # virtualenv
 venv/
 ENV/
+env*/
+*-dev/
+*-prod/
 
 # Editors
 .idea/

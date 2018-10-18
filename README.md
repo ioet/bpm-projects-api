@@ -1,8 +1,8 @@
 BPM Projects API
 ================
 [![Build Status](https://travis-ci.com/ioet/bpm-projects-api.svg?branch=master)](https://travis-ci.com/ioet/bpm-projects-api)
-[![Build Status](https://dev.azure.com/ioet-bpm/bpm-projects-api/_apis/build/status/bpm-projects-api-Docker%20container-CI-CD)](https://dev.azure.com/ioet-bpm/bpm-projects-api/_build/latest?definitionId=7)
-
+[![Build status](https://dev.azure.com/ioet-bpm/bpm-projects-api/_apis/build/status/bpm-projects-api-Docker%20container-CI-CD)](https://dev.azure.com/ioet-bpm/bpm-projects-api/_build/latest?definitionId=7)
+![Deployment Status](https://vsrm.dev.azure.com/ioet-bpm/_apis/public/Release/badge/53b8ced8-7634-483b-bf19-342d77b2f07a/2/2)
 
 API for BPM Projects
 
@@ -33,6 +33,19 @@ Go to the directory of the project
     ```bash
      pip install -r requirements.txt
     ```
+
+#### Current Environments
+There are dependencies for multiple environments:
+* `dev`: Used for development. Tries to simplify complexity in sake of a better understanding of
+the bussiness logic.
+* `prod`: Like `dev` but for production.
+* `azure-dev`: Used for development using real Azure resources, i.e. it connects remotely to try 
+real PaaS provided by Azure, e.g. a Mongo database in Azure Cosmos DB. It requires:
+    - A MongoDB database installed and running in the local pc
+
+* `azure-prod`: Alike to `azure-dev` but for production
+    
+Its highly recommended a virtual environment be created for each configuration.
     
 ### Usage
 
@@ -45,11 +58,12 @@ Run the project using
     export FLASK_ENV=development
     ```
 
-1. Run the `run` script corresponding to your OS:
+1. Run the app with one of the following commands:
 
-    * `source run.sh` for Unix based OS
-    * `start run.bat` for Windows
-    *  `python -m bpm_projects_api` thanks to the `__main__.py`
+    * `python3 -m bpm_projects_api` thanks to the `__main__.py`
+    * `gunicorn -b 0.0.0.0:8000 run:app`
+    
+    
 
 What it basically does is to set the `FLASK_APP` env variable to the main package and run the app using `Flask`.
 If you are using an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
@@ -121,7 +135,7 @@ Afterwards you can **import** this collection into [Postman][postman_app] and us
 test this api
 
 <a href="">
-  <img src="requirements/img/bpm-projects-postman-collection.png" title="After the postman collection is imported" />
+  <img src="img/bpm-projects-postman-collection.png" title="After the postman collection is imported" />
 </a>
 
 ## Built with

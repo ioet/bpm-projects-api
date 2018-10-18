@@ -4,8 +4,10 @@ https://flask-restplus.readthedocs.io/en/stable/scaling.html
 """
 from flask import current_app as app
 from flask_restplus import Api
+from pymongo.errors import DuplicateKeyError
 
-from bpm_projects_api.model import MissingResource, InvalidInput, InvalidMatch
+from bpm_projects_api.model.errors \
+    import MissingResource, InvalidMatch, InvalidInput
 from . import project
 from ..core import security
 
@@ -21,10 +23,15 @@ api.add_namespace(project.ns)
 
 
 @api.errorhandler(MissingResource)
-@api.errorhandler(InvalidMatch)
 def handle_not_found_exceptions(e):
     """Return a 404 status code error"""
     return {'message': str(e)}, 404
+
+
+@api.errorhandler(InvalidMatch)
+def handle_no_match_exceptions(e):
+    """Return a 204 status code error"""
+    return {'message': str(e)}, 204
 
 
 @api.errorhandler(InvalidInput)
@@ -33,7 +40,17 @@ def handle_invalid_request_exceptions(e):
     return {'message': str(e)}, 400
 
 
+@api.errorhandler(DuplicateKeyError)
+def handle_duplicated_elements_exceptions(e):
+    """Return a 400 status code error"""
+    return {'message': "This element already exist in the system"}, 400
+
+
 @api.errorhandler
 def default_error_handler(e):
-    if "FLASK_DEBUG" not in app.config:
+    if not app.config.get("FLASK_DEBUG", False):
+        app.logger.error(e)
         return {'message': 'An unhandled exception occurred.'}, 500
+
+
+__all__ = [api]
