@@ -1,7 +1,8 @@
 import os
 import sys
 
-from flask import Flask
+from flask import Flask, request
+from flask_opa import OPA
 from werkzeug.contrib.fixers import ProxyFix
 
 
@@ -59,6 +60,21 @@ def init_app(app):
 
     if app.config.get('FLASK_ENV') == 'production':
         sys.stdout = sys.stderr = open('bpm-projects-api.log', 'wt')
+
+    setup_opa(app)
+
+
+def setup_opa(app):
+    def parse_input():
+        return {
+            "input": {
+                "method": request.method,
+                "path": request.path.rstrip('/').strip().split("/")[1:],
+                "user": 'rene',
+            }
+        }
+
+    app.opa = OPA(app, input_function=parse_input)
 
 
 def add_debug_toolbar(app):

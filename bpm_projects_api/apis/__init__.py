@@ -2,6 +2,7 @@
 Using recommended patterns of scaling from
 https://flask-restplus.readthedocs.io/en/stable/scaling.html
 """
+import flask_opa
 from flask import current_app as app
 from flask_restplus import Api
 from pymongo.errors import DuplicateKeyError
@@ -44,6 +45,12 @@ def handle_invalid_request_exceptions(e):
 def handle_duplicated_elements_exceptions(e):
     """Return a 400 status code error"""
     return {'message': "This element already exist in the system"}, 400
+
+
+@api.errorhandler(flask_opa.OPAException)
+def handle_opa_exception(e):
+    """Return a 403 due to OPA error"""
+    return {'message': e}, 403
 
 
 @api.errorhandler

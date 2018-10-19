@@ -25,6 +25,8 @@ class InMemoryDevelopmentConfig(Config):
 
 
 class LocalMongoDBDevelopmentConfig(Config):
+    OPA_URL = "http://localhost:8181/v1/data/bpm/projects/allow"
+    OPA_SECURED = True
     DEBUG = True
     SECRET_KEY = "secretkeyfordevelopment"
     USER_PASSWORD = "secret"
@@ -45,8 +47,10 @@ class TestConfig(InMemoryDevelopmentConfig):
 
 
 class AzureConfig(Config):
+    OPA_URL = "http://localhost:8181/v1/data/bpm/projects/allow"
+    OPA_SECURED = True
     DATABASE = "mongodb_cosmosdb"
-    OPA_URL = ""
+    OPA_URL = "http://localhost:8181/v1/data/bpm/projects/allow"
     TOKEN_TTL = 3600
     MONGO_URI = os.environ.get('DB_URI')
     FLASK_DEBUG = False
