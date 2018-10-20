@@ -50,7 +50,7 @@ def handle_duplicated_elements_exceptions(e):
 @api.errorhandler(flask_opa.OPAException)
 def handle_opa_exception(e):
     """Return a 403 due to OPA error"""
-    return {'message': e}, 403
+    return {'message': str(e)}, 403
 
 
 @api.errorhandler

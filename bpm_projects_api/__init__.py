@@ -5,6 +5,8 @@ from flask import Flask, request
 from flask_opa import OPA
 from werkzeug.contrib.fixers import ProxyFix
 
+from core.security import get_token
+
 
 def create_app(config_path='bpm_projects_api.config.InMemoryDevelopmentConfig',
                config_data=None):
@@ -66,11 +68,12 @@ def init_app(app):
 
 def setup_opa(app):
     def parse_input():
+        token = get_token()
         return {
             "input": {
                 "method": request.method,
                 "path": request.path.rstrip('/').strip().split("/")[1:],
-                "user": 'rene',
+                "user": token["sub"]
             }
         }
 

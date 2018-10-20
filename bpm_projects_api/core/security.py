@@ -34,6 +34,25 @@ class PolicyError(Exception):
     pass
 
 
+def get_token():
+    """Retrieves the JWT contained in the header of the request"""
+
+    try:
+        token = request.headers.get('token', None)
+        if not token:
+            return {
+                'iss': "",
+                'sub': "",
+                'role': "",
+                'exp': ""
+            }
+        return jwt.decode(token, get_secret_key())
+    except DecodeError:
+        abort(message='Malformed token', code=401)
+    except ExpiredSignatureError:
+        abort(message='Expired token', code=401)
+
+
 def token_required(f, validate_function=None):
     @wraps(f)
     def validate_token(*args, **kwargs):
@@ -85,7 +104,7 @@ def login():
         token_ttl = app.config.get('TOKEN_TTL', 3600)
         expiration_time = datetime.utcnow() + timedelta(seconds=token_ttl)
         token = jwt.encode({
-            'iss': "ioet.com",
+            'iss': "ioet",
             'sub': auth.username,
             'role': "admin",
             'exp': expiration_time
@@ -100,7 +119,7 @@ def login():
 @ns.route('/logout')
 def logout():
     """End the current user session"""
-    session.clear()
+    abort(401)
     return redirect('/')
 
 
