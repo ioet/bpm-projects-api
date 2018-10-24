@@ -5,7 +5,7 @@ from flask import Flask, request
 from flask_opa import OPA
 from werkzeug.contrib.fixers import ProxyFix
 
-from core.security import get_token
+from bpm_projects_api.core.security import get_token
 
 
 def create_app(config_path='bpm_projects_api.config.InMemoryDevelopmentConfig',

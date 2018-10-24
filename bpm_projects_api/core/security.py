@@ -3,7 +3,7 @@ from functools import wraps
 
 import jwt
 from flask import request, current_app as app, make_response, \
-    Blueprint, session, redirect
+    Blueprint
 from flask.json import jsonify
 from flask_restplus import abort
 from jwt import DecodeError, ExpiredSignatureError
@@ -119,8 +119,7 @@ def login():
 @ns.route('/logout')
 def logout():
     """End the current user session"""
-    abort(401)
-    return redirect('/')
+    return "Your session is closed", 401
 
 
 token_policies = TokenPolicies
