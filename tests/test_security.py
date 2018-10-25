@@ -23,11 +23,11 @@ def test_successful_logout(auth):
     """After logout a user_id should not exist in the session"""
     auth.login()
     response = auth.logout()
-    assert 200 == response.status_code
+    assert 401 == response.status_code
 
 
 def test_logout_unexisting_session(auth):
-    """If logout is called when no session exists the response should be Ok"""
+    """If logout is called when no session exists the response return 401"""
     resp1 = auth.logout()
     resp2 = auth.logout()
-    assert 200 == resp1.status_code == resp2.status_code
+    assert 401 == resp1.status_code == resp2.status_code

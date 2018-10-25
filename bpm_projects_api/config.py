@@ -25,9 +25,9 @@ class InMemoryDevelopmentConfig(Config):
 
 
 class LocalMongoDBDevelopmentConfig(Config):
+    DEBUG = False
     OPA_URL = "http://localhost:8181/v1/data/bpm/projects/allow"
     OPA_SECURED = True
-    DEBUG = False
     SECRET_KEY = "secretkeyfordevelopment"
     USER_PASSWORD = "secret"
     FLASK_ENV = "development"
@@ -51,7 +51,6 @@ class AzureConfig(Config):
     OPA_URL = "http://localhost:8181/v1/data/bpm/projects/allow"
     OPA_SECURED = True
     DATABASE = "mongodb_cosmosdb"
-    OPA_URL = "http://localhost:8181/v1/data/bpm/projects/allow"
     TOKEN_TTL = 3600
     MONGO_URI = os.environ.get('DB_URI')
     FLASK_DEBUG = False
@@ -69,8 +68,9 @@ class AzureProductionConfig(AzureConfig, ProductionConfig):
 
 
 class TestAzureConfig(AzureConfig, TestConfig):
-    pass
+    OPA_SECURED = False
 
 
 class TestLocalMongoDBConfig(LocalMongoDBDevelopmentConfig, TestConfig):
     MONGO_URI = 'mongodb://localhost:27017/ioet-bpm-test'
+    OPA_SECURED = False
