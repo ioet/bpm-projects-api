@@ -1,6 +1,8 @@
 FROM ubuntu:18.04
 LABEL maintainer="ehernandez@ioet.com"
 
+ARG DB_URI
+
 RUN apt-get update
 RUN apt-get install -y git
 RUN apt-get install -y python3 python3-dev python3-pip
@@ -21,7 +23,7 @@ ENV APP_CONFIG bpm_projects_api.config.AzureProductionConfig
 ENV FLASK_ENV production
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
-ENV DB_URI "mongodb://ioet-bpm:dCU7Mo7IApvEjkJDuFt56PzXWvOjhUaCnYNheiwlXploVLvMsftLdS3Up29Q4QX26hkyjbV8hPvuIalfEqxXDA==@ioet-bpm.documents.azure.com:10255/ioet-bpm?ssl=true&replicaSet=globaldb"
+ENV DB_URI $DB_URI
 
 # Setup and Run the OPA policies server
 RUN curl -o opa https://github.com/open-policy-agent/opa/releases/download/v0.9.2/opa_linux_amd64
