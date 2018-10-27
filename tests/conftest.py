@@ -53,6 +53,19 @@ def app(request):
     return app
 
 
+@pytest.fixture(scope='session')
+def app_with_opa():
+    config = {
+        "OPA_URL": "http://localhost:8181/v1/data/bpm/projects/allow",
+        "OPA_SECURED": True
+    }
+    app = create_app("bpm_projects_api.config.TestConfig", config_data=config)
+
+    reload_modules_of_interest(app)
+
+    return app
+
+
 def reload_modules_of_interest(app):
     """In python 3 modules retain its import state
      so they must be reloaded in order to get the new instances"""
@@ -77,7 +90,6 @@ def client(app):
 def user(app):
     """A test user"""
     return User(TEST_USER["name"], TEST_USER["password"])
-
 
 @pytest.fixture
 def api():
