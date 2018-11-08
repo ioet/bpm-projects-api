@@ -1,7 +1,6 @@
 from flask_restplus import fields, Resource, Namespace, abort, inputs
 
 from bpm_projects_api.apis.utils import query_str
-from bpm_projects_api.core.security import token_required, token_policies
 # Project namespace
 from bpm_projects_api.model import project_dao
 from bpm_projects_api.model.errors import MissingResource
@@ -33,7 +32,6 @@ project = ns.model('Project', {
 class Projects(Resource):
     @ns.doc('list_projects')
     @ns.marshal_list_with(project, code=200)
-    @token_required
     def get(self):
         """List all projects"""
         return project_dao.get_all()
@@ -41,7 +39,6 @@ class Projects(Resource):
     @ns.doc('create_project')
     @ns.expect(project)
     @ns.marshal_with(project, code=201)
-    @token_policies.administrator_required
     def post(self):
         """Create a project"""
         return project_dao.create(ns.payload), 201
@@ -63,7 +60,6 @@ class SearchProject(Resource):
     @ns.doc('search_project')
     @ns.expect(search_parser)
     @ns.marshal_list_with(project, code=200)
-    @token_policies.administrator_required
     def get(self):
         """Search for projects given some criteria(s)"""
         search_data = search_parser.parse_args()
@@ -90,7 +86,6 @@ class Project(Resource):
 
     @ns.doc('delete_project')
     @ns.response(204, 'Project deleted')
-    @token_policies.administrator_required
     def delete(self, uid):
         """Deletes a project"""
         project_dao.delete(uid)
@@ -99,7 +94,6 @@ class Project(Resource):
     @ns.doc('put_project')
     @ns.expect(project)
     @ns.marshal_with(project)
-    @token_policies.administrator_required
     def put(self, uid):
         """Create or replace a project"""
         return project_dao.update(uid, ns.payload)
@@ -109,7 +103,6 @@ class Project(Resource):
     @ns.response(204, 'State of the project successfully updated')
     @ns.response(400, "Bad parameters input")
     @ns.expect(project_update_parser)
-    @token_policies.administrator_required
     def post(self, uid):
         """Updates a project using form data"""
         try:
