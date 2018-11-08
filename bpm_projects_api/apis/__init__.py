@@ -9,13 +9,11 @@ from pymongo.errors import DuplicateKeyError
 from bpm_projects_api.model.errors \
     import MissingResource, InvalidMatch, InvalidInput
 from . import project
-from ..core import security
 
 api = Api(
     title='BPM Projects API',
     version='0.0.1',
     description='API for managing projects on the IOET BPM',
-    authorizations=security.authorizations, security="BPM Token",
     default=project.ns.name, default_label=project.ns.name
 )
 

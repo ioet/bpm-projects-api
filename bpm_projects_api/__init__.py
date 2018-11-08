@@ -51,9 +51,6 @@ def init_app(app):
         CORS(app, resources={r"/*": {"origins": cors_origins_list}})
         app.logger.info("Allowing CORS access to [%s]" % cors_origins)
 
-    from bpm_projects_api.core import security
-    app.register_blueprint(security.ns)  # Security endpoints
-
     if app.config.get('DEBUG'):
         add_debug_toolbar(app)
 

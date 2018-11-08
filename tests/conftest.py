@@ -23,26 +23,6 @@ class User:
         self.password = password
 
 
-class AuthActions:
-    """Auth actions container in tests"""
-
-    def __init__(self, app, client):
-        self._app = app
-        self._client = client
-
-    def login(self, username=TEST_USER["name"],
-              password=TEST_USER["password"]):
-        login_url = url_for("security.login", self._app)
-        return open_with_basic_auth(self._client,
-                                    login_url,
-                                    username,
-                                    password)
-
-    def logout(self):
-        return self._client.get(url_for("security.logout", self._app),
-                                follow_redirects=True)
-
-
 @pytest.fixture(scope='session', params=CONFIGURATIONS)
 def app(request):
     """Create and configure a new app instance for each test."""
@@ -84,23 +64,6 @@ def api():
     """Projects API"""
     from bpm_projects_api.apis import api
     return api
-
-
-@pytest.fixture
-def secret_token_key(app):
-    """A secret key to sign JWTs"""
-    return app.config["SECRET_KEY"]
-
-
-@pytest.fixture
-def auth(app, client):
-    return AuthActions(app, client)
-
-
-@pytest.fixture
-def auth_token(auth, user):
-    response = auth.login(user.username, user.password)
-    return json.loads(response.data)["token"]
 
 
 @pytest.yield_fixture
