@@ -7,7 +7,7 @@ import pytest
 from flask import json
 
 from bpm_projects_api import create_app
-from tests.utils import url_for, open_with_basic_auth, create_sample_project
+from tests.utils import url_for, create_sample_project
 
 CONFIGURATIONS = ['TestConfig', 'TestLocalMongoDBConfig', 'TestAzureConfig']
 
