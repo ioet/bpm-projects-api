@@ -15,11 +15,10 @@ before_install:
 
 # install dependencies
 install:
-  - pip3 install -r requirements/azure-dev.txt
-  - pip3 install codecov
-  #Initialize the database
-  - python3 cli.py init_db
-  #Run OPA
+ - make dev-requirements
+ - make opa
+ - make bpm-opa-directory
+ - make start-opa
 
 script:
   #PEP 8

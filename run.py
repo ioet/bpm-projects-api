@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 This file is needed by gunicorn to run
 """

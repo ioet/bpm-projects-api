@@ -26,14 +26,11 @@ ENV LANG C.UTF-8
 ENV DB_URI $DB_URI
 
 # Setup and Run the OPA policies server
-RUN curl -o opa https://github.com/open-policy-agent/opa/releases/download/v0.9.2/opa_linux_amd64
-RUN chmod 755 ./opa
-RUN curl -O $(curl "https://api.github.com/repos/ioet/bpm-opa/releases/latest" | jq -r '.assets[0].browser_download_url')
-# Run OPA this way until this issue be solved https://github.com/open-policy-agent/opa/issues/1019
-RUN tar -xvzf bpm.tar.gz
-RUN ./opa run -s bpm &
+RUN make opa
+RUN make bpm-opa-directory
+RUN make start-opa
 EXPOSE 8181
 
 
 EXPOSE 8000
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "run:app"]
+CMD ["make", "run"]

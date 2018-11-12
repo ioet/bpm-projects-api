@@ -58,12 +58,13 @@ Run the project using
     export FLASK_ENV=development
     ```
 
-1. Run the app with one of the following commands:
+1. To just run the app run:
 
-    * `python3 -m bpm_projects_api` thanks to the `__main__.py`
-    * `gunicorn -b 0.0.0.0:8000 run:app`
+    * `make dev` for development mode
+    * `make prod` in production mode
     
-    
+
+To know other actions that the Makefile allows execute `make help`.    
 
 What it basically does is to set the `FLASK_APP` env variable to the main package and run the app using `Flask`.
 If you are using an IDE like PyCharm the process is way easier because they support configurations for running Flask projects.
