@@ -10,19 +10,27 @@ dev-requirements:
 
 .PHONY: run prod
 run prod:
-	@echo Running in production mode. To run in development mode please run make dev.
+	@echo Running in production mode. To run in development mode use make dev.
 	gunicorn -b 0.0.0.0:8000 run:app
 
 .PHONY: dev
 dev:
-	@echo Running in development mode. To run in production mode please run make run.
+	@echo Running in development mode. To run in production mode use make run.
 	source .env
 	flask run
 
-.PHONY: opa
-opa:
-	curl -o opa https://github.com/open-policy-agent/opa/releases/download/v0.9.2/opa_linux_amd64
+.PHONY: opa-linux
+opa-linux:
+	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("linux")) | .browser_download_url')
 	chmod 755 ./opa
+	mv ./opa /usr/local/bin/
+	@echo opa has been installed.
+
+.PHONY: opa-mac
+opa-mac:
+	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("darwin")) | .browser_download_url')
+	chmod 755 ./opa
+	mv ./opa /usr/local/bin/
 	@echo opa has been installed.
 
 .PHONY: bpm-opa-directory
@@ -52,7 +60,7 @@ help:
 	@echo "make bpm-opa-directory"
 	@echo "       Downloads the opa policies to the folder bpm"
 	@echo "make opa"
-	@echo "       Installs opa"
+	@echo "       Downloads and installs the latest version of opa"
 	@echo "make start-opa"
 	@echo "       Starts the opa server"
 	@echo "make stop-opa"
