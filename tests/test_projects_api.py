@@ -82,14 +82,30 @@ def test_delete_existing_project(client, sample_project, project_dao):
     assert 0 == len(existing_projects)
 
 
-def test_get_projects_by_name(client, sample_project, project_dao):
-
+def test_get_project_by_name(client, sample_project, project_dao):
+    # Given
     project_name = sample_project['short_name']
 
-    response = client.get("/projects?name=%s" % project_name,
+    # When
+    response = client.get("/projects/?name=%s" % project_name,
                           follow_redirects=True)
     
+    # Then
     assert 200 == response.status_code
-    matching_projects = project_dao.get_projects_name_coincidence(project_name)
-    assert matching_projects[0]['short_name'] == project_name
-    assert len(matching_projects) > 0
+    obtained_project = json.loads(response.data)
+    assert project_name in obtained_project[0]['comments'] or \
+        project_name in obtained_project[0]['short_name']
+
+
+def test_get_project_is_active(client, sample_project, project_dao):
+    # Given
+    project_state = sample_project['active']
+    
+    # When
+    response = client.get("/projects/?active=%s" % project_state,
+                          follow_redirects=True)
+    # Then
+    assert 200 == response.status_code
+    obtained_project = json.loads(response.data)
+    assert obtained_project[0]['active'] is True
+
