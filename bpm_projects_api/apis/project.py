@@ -27,14 +27,22 @@ project = ns.model('Project', {
                                          'or not')
 })
 
+search_parser = ns.parser()
+search_parser.add_argument('name', type=query_str(3, 100),
+                           help='Text to search in the project')
+
 
 @ns.route('/')
 class Projects(Resource):
     @ns.doc('list_projects')
+    @ns.expect(search_parser)
     @ns.marshal_list_with(project, code=200)
     def get(self):
         """List all projects"""
-        return project_dao.get_all()
+        search_data = search_parser.parse_args()
+        if search_data:
+            return project_dao.get_all()        
+        return project_dao.search(search_data)
 
     @ns.doc('create_project')
     @ns.expect(project)
@@ -112,3 +120,16 @@ class Project(Resource):
             abort(code=400)
         except MissingResource as e:
             abort(message=str(e), code=404)
+
+'''@ns.route('/<string:name>')
+@ns.param('name', 'The project identifier')
+class Project(Resource):
+    @ns.doc('Search project by name')
+    @ns.marshal_list_with(project, code=200)
+    @ns.response(200, 'Some projects match whit criteria')
+    def get(self, name):
+        response = project_dao.get_projects_name_coincidence(name)
+        return response'''
+
+    
+    

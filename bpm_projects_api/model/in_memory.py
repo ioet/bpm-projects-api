@@ -80,6 +80,13 @@ class ProjectDAO(object):
                                  if p['active'] is is_active]
 
         return matching_projects
+    
+    def get_projects_name_coincidence(self, search_str):
+        matching_projects = []
+        for project in self.projects:
+            if search_str in project.get('short_name'):
+                matching_projects.append(project)
+        return matching_projects
 
 
 # Instances

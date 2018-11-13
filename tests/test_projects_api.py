@@ -1,4 +1,4 @@
-from flask import json
+from flask import json, request
 
 from tests.utils import create_sample_project
 
@@ -80,3 +80,16 @@ def test_delete_existing_project(client, sample_project, project_dao):
     assert 204 == response.status_code
     existing_projects = project_dao.get_all()
     assert 0 == len(existing_projects)
+
+
+def test_get_projects_by_name(client, sample_project, project_dao):
+
+    project_name = sample_project['short_name']
+
+    response = client.get("/projects?name=%s" % project_name,
+                          follow_redirects=True)
+    
+    assert 200 == response.status_code
+    matching_projects = project_dao.get_projects_name_coincidence(project_name)
+    assert matching_projects[0]['short_name'] == project_name
+    assert len(matching_projects) > 0

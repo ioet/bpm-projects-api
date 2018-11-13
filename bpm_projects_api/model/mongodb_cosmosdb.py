@@ -52,6 +52,11 @@ class ProjectDAO(ProjectDaoMongoDB):
 
         return result
 
+    def get_projects_name_coincidence(self, name):
+        mongo_search_criteria = {'search_string': name}
+        matching_projects = self.search(mongo_search_criteria)
+        return matching_projects
+
 
 # Instances
 project_dao = ProjectDAO()
