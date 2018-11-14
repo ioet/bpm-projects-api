@@ -16,7 +16,7 @@ before_install:
 # install dependencies
 install:
  - make dev-requirements
- - make opa
+ - make opa-linux
  - make bpm-opa-directory
  - make start-opa
 

@@ -26,11 +26,11 @@ ENV LANG C.UTF-8
 ENV DB_URI $DB_URI
 
 # Setup and Run the OPA policies server
-RUN make opa
+RUN make opa-linux
 RUN make bpm-opa-directory
 RUN make start-opa
 EXPOSE 8181
 
-
 EXPOSE 8000
+
 CMD ["make", "run"]

@@ -23,14 +23,12 @@ dev:
 opa-linux:
 	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("linux")) | .browser_download_url')
 	chmod 755 ./opa
-	mv ./opa /usr/local/bin/
 	@echo opa has been installed.
 
 .PHONY: opa-mac
 opa-mac:
 	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("darwin")) | .browser_download_url')
 	chmod 755 ./opa
-	mv ./opa /usr/local/bin/
 	@echo opa has been installed.
 
 .PHONY: bpm-opa-directory
@@ -42,13 +40,13 @@ bpm-opa-directory:
 
 .PHONY: start-opa
 start-opa:
-	nohup opa run -s -w bpm &
+	nohup ./opa run -s -w bpm &
 	@echo The opa server is running in http://localhost:8181
 
 .PHONY: stop-opa
 stop-opa:
+	@echo Stopping the opa server at http://localhost:8181
 	@kill $(shell ps | grep opa | awk '{print $1}' | head -n 1)
-	@echo The opa server was terminated.
 
 .PHONY: help
 help:
