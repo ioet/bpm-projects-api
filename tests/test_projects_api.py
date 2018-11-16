@@ -109,3 +109,37 @@ def test_get_project_is_active(client, sample_project, project_dao):
     obtained_project = json.loads(response.data)
     assert obtained_project[0]['active'] is True
 
+
+def test_get_project_name_is_active(client, sample_project, project_dao):
+    # Given
+    project_state = sample_project['active']
+    project_name = sample_project['short_name']
+  
+    # When
+    response = client.get("/projects/?name={}&active={}".format( project_name,
+                          project_state), follow_redirects=True)
+  
+    # Then
+    assert 200 == response.status_code
+    obtained_project = json.loads(response.data)
+    assert obtained_project[0]['active'] is True and\
+            obtained_project[0]['short_name'] == project_name
+
+
+def test_get_project_name_is_inactive(client, sample_project, project_dao):
+    # Given
+    project_state = sample_project['active']
+    project_name = sample_project['short_name']
+  
+    # When
+    response = client.get("/projects/?name={}&active={}".format( project_name,
+                          project_state), follow_redirects=True)
+  
+    # Then
+    assert 200 == response.status_code
+    obtained_project = json.loads(response.data)
+    assert not obtained_project[0]['active'] is not True and\
+            obtained_project[0]['short_name'] == project_name
+
+
+

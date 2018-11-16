@@ -1,6 +1,6 @@
 from flask_restplus import fields, Resource, Namespace, abort, inputs
 
-from bpm_projects_api.apis.utils import query_str
+from bpm_projects_api.apis.utils import query_str, string_is_none
 # Project namespace
 from bpm_projects_api.model import project_dao
 from bpm_projects_api.model.errors import MissingResource
@@ -27,26 +27,26 @@ project = ns.model('Project', {
                                          'or not')
 })
 
-search_parser = ns.parser()
-search_parser.add_argument('search_string', type=query_str(3, 100),
-                           help='Text to search in the project')
-search_parser.add_argument('active', type=inputs.boolean,
-                                     help='Is the project active?')
+
+criteria_parser = ns.parser()
+criteria_parser.add_argument('name', type=query_str(3, 100),
+                             ignore=True,
+                             help='Text to search in the project')
+criteria_parser.add_argument('active', type=inputs.boolean,
+                             ignore=True,
+                             help='Is the project active?')
 
 
 @ns.route('/')
 class Projects(Resource):
     @ns.doc('list_projects')
-    @ns.expect(search_parser)
+    @ns.expect(criteria_parser)
     @ns.marshal_list_with(project, code=200)
     def get(self):
         """List all projects"""
-        search_data = search_parser.parse_args()
-        print(search_data)
-        if not search_data['search_string'] is None or \
-           not search_data['active'] is None:        
-            return project_dao.search(search_data)
-        return project_dao.get_all()
+        search_data = criteria_parser.parse_args()
+        print(project_dao.search_project_name_or_state(search_data))
+        return project_dao.search_project_name_or_state(search_data)
         
     @ns.doc('create_project')
     @ns.expect(project)
@@ -54,6 +54,13 @@ class Projects(Resource):
     def post(self):
         """Create a project"""
         return project_dao.create(ns.payload), 201
+
+
+search_parser = ns.parser()
+search_parser.add_argument('search_string', type=query_str(3, 100),
+                           help='Text to search in the project')
+search_parser.add_argument('active', type=inputs.boolean,
+                           help='Is the project active?')
 
 
 @ns.route('/search/')
@@ -66,7 +73,6 @@ class SearchProject(Resource):
     def get(self):
         """Search for projects given some criteria(s)"""
         search_data = search_parser.parse_args()
-        print(search_data)
         return project_dao.search(search_data)
 
 
