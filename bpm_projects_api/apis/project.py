@@ -45,7 +45,6 @@ class Projects(Resource):
     def get(self):
         """List all projects"""
         search_data = criteria_parser.parse_args()
-        print(project_dao.search_project_name_or_state(search_data))
         return project_dao.search_project_name_or_state(search_data)
 
     @ns.doc('create_project')
