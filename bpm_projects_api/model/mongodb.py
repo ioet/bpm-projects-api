@@ -37,7 +37,7 @@ class ProjectDAO(object):
         ], name='search_index', default_language='english')
 
     def get_all(self):
-        entries = self.collection.find()      
+        entries = self.collection.find()
         result = list(map(convert_from_db, entries))
         return result
 
@@ -96,7 +96,7 @@ class ProjectDAO(object):
         mongo_search_order = None
 
         query_str = search_criteria.get('search_string')
-    
+
         if query_str:
             mongo_search_criteria.update({
                 '$text': {
@@ -121,12 +121,12 @@ class ProjectDAO(object):
         result = list(map(convert_from_db, cursor))
         if not result:
             raise InvalidMatch("No project matched the specified criteria")
-      
+
         return result
-    
+
     def search_project_name_or_state(self, search_criteria):
         if search_criteria.get('name') is None and\
-            search_criteria.get('active') is None:
+           search_criteria.get('active') is None:
             return project_dao.get_all()
         return project_dao.search(search_criteria)
 

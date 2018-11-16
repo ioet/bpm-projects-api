@@ -1,4 +1,4 @@
-from flask import json, request
+from flask import json
 
 from tests.utils import create_sample_project
 
@@ -30,7 +30,8 @@ def test_post_new_project(client, project_dao):
     assert 1 == len(all_entries)
 
 
-def test_get_all_projects_should_return_a_project(client, sample_project, project_dao):
+def test_get_all_projects_should_return_a_project(client, sample_project,
+                                                  project_dao):
     """Check if the project previously created is there"""
     # When
     response = client.get("/projects/",
@@ -89,7 +90,7 @@ def test_get_project_by_name(client, sample_project, project_dao):
     # When
     response = client.get("/projects/?name=%s" % project_name,
                           follow_redirects=True)
-    
+
     # Then
     assert 200 == response.status_code
     obtained_project = json.loads(response.data)
@@ -100,7 +101,7 @@ def test_get_project_by_name(client, sample_project, project_dao):
 def test_get_project_is_active(client, sample_project, project_dao):
     # Given
     project_state = sample_project['active']
-    
+
     # When
     response = client.get("/projects/?active=%s" % project_state,
                           follow_redirects=True)
@@ -114,32 +115,29 @@ def test_get_project_name_is_active(client, sample_project, project_dao):
     # Given
     project_state = sample_project['active']
     project_name = sample_project['short_name']
-  
+
     # When
-    response = client.get("/projects/?name={}&active={}".format( project_name,
+    response = client.get("/projects/?name={}&active={}".format(project_name,
                           project_state), follow_redirects=True)
-  
+
     # Then
     assert 200 == response.status_code
     obtained_project = json.loads(response.data)
     assert obtained_project[0]['active'] is True and\
-            obtained_project[0]['short_name'] == project_name
+        obtained_project[0]['short_name'] == project_name
 
 
 def test_get_project_name_is_inactive(client, sample_project, project_dao):
     # Given
     project_state = sample_project['active']
     project_name = sample_project['short_name']
-  
+
     # When
-    response = client.get("/projects/?name={}&active={}".format( project_name,
+    response = client.get("/projects/?name={}&active={}".format(project_name,
                           project_state), follow_redirects=True)
-  
+
     # Then
     assert 200 == response.status_code
     obtained_project = json.loads(response.data)
     assert not obtained_project[0]['active'] is not True and\
-            obtained_project[0]['short_name'] == project_name
-
-
-
+        obtained_project[0]['short_name'] == project_name

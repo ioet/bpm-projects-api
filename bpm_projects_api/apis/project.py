@@ -1,6 +1,6 @@
 from flask_restplus import fields, Resource, Namespace, abort, inputs
 
-from bpm_projects_api.apis.utils import query_str, string_is_none
+from bpm_projects_api.apis.utils import query_str
 # Project namespace
 from bpm_projects_api.model import project_dao
 from bpm_projects_api.model.errors import MissingResource
@@ -47,7 +47,7 @@ class Projects(Resource):
         search_data = criteria_parser.parse_args()
         print(project_dao.search_project_name_or_state(search_data))
         return project_dao.search_project_name_or_state(search_data)
-        
+
     @ns.doc('create_project')
     @ns.expect(project)
     @ns.marshal_with(project, code=201)
@@ -121,4 +121,4 @@ class Project(Resource):
         except ValueError:
             abort(code=400)
         except MissingResource as e:
-            abort(message=str(e), code=404)    
+            abort(message=str(e), code=404)
