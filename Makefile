@@ -13,10 +13,14 @@ run prod:
 	@echo Running in production mode. To run in development mode use make dev.
 	gunicorn -b 0.0.0.0:8000 run:app
 
+.PHONY: run-with-opa
+run-with-opa: start-opa
+	@echo Running in production mode using OPA to enforce security policies.
+	gunicorn -b 0.0.0.0:8000 run:app
+
 .PHONY: dev
 dev:
 	@echo Running in development mode. To run in production mode use make run.
-	source .env
 	flask run
 
 .PHONY: opa-linux
@@ -41,11 +45,11 @@ bpm-opa-directory:
 .PHONY: start-opa
 start-opa:
 	nohup ./opa run -s -w bpm &
-	@echo The opa server is running in http://localhost:8181
+	@echo The opa server is running in http://0.0.0.0:8181
 
 .PHONY: stop-opa
 stop-opa:
-	@echo Stopping the opa server at http://localhost:8181
+	@echo Stopping the opa server...
 	@kill $(shell ps | grep opa | awk '{print $1}' | head -n 1)
 
 .PHONY: help

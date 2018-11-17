@@ -2,8 +2,10 @@
 Using recommended patterns of scaling from
 https://flask-restplus.readthedocs.io/en/stable/scaling.html
 """
-import flask_opa
+
+import requests
 from flask import current_app as app
+from flask_opa import OPAException
 from flask_restplus import Api
 from pymongo.errors import DuplicateKeyError
 
@@ -47,7 +49,13 @@ def handle_duplicated_elements_exceptions(e):
     return {'message': "This element already exist in the system"}, 400
 
 
-@api.errorhandler(flask_opa.OPAException)
+@api.errorhandler(requests.exceptions.ConnectionError)
+def handle_connection_error(e):
+    """Return a 500 due to OPA connection error"""
+    return {'message': "Connection issues: %s" % str(e)}, 500
+
+
+@api.errorhandler(OPAException)
 def handle_opa_exception(e):
     """Return a 403 due to OPA error"""
     return {'message': str(e)}, 403
@@ -57,7 +65,7 @@ def handle_opa_exception(e):
 def default_error_handler(e):
     if not app.config.get("FLASK_DEBUG", False):
         app.logger.error(e)
-        return {'message': 'An unhandled exception occurred.'}, 500
+        return {'message': 'An unhandled exception occurred'}, 500
 
 
 __all__ = [api]
