@@ -28,24 +28,25 @@ project = ns.model('Project', {
 })
 
 
-criteria_parser = ns.parser()
-criteria_parser.add_argument('name', type=query_str(3, 100),
-                             ignore=True,
-                             help='Text to search in the project')
-criteria_parser.add_argument('active', type=inputs.boolean,
-                             ignore=True,
-                             help='Is the project active?')
+filter_parser = ns.parser()
+filter_parser.add_argument('short_name',
+                           type=query_str(3, 100),
+                           ignore=True,
+                           help='Name or Strign to search')
+filter_parser.add_argument('active', type=inputs.boolean,
+                           help='Is the project active?')
 
 
 @ns.route('/')
 class Projects(Resource):
     @ns.doc('list_projects')
-    @ns.expect(criteria_parser)
+    @ns.expect(filter_parser)
+    @ns.response(204, 'No match for your search')
     @ns.marshal_list_with(project, code=200)
     def get(self):
-        """List all projects"""
-        search_data = criteria_parser.parse_args()
-        return project_dao.search_project_name_or_state(search_data)
+        """List projects whit filters"""
+        filter_data = filter_parser.parse_args()
+        return project_dao.search_project_name_or_state(filter_data)
 
     @ns.doc('create_project')
     @ns.expect(project)
@@ -56,7 +57,8 @@ class Projects(Resource):
 
 
 search_parser = ns.parser()
-search_parser.add_argument('search_string', type=query_str(3, 100),
+search_parser.add_argument('search_string',
+                           type=query_str(3, 100),
                            help='Text to search in the project')
 search_parser.add_argument('active', type=inputs.boolean,
                            help='Is the project active?')

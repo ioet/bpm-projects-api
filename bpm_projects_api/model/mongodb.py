@@ -125,7 +125,7 @@ class ProjectDAO(object):
         return result
 
     def search_project_name_or_state(self, search_criteria):
-        if search_criteria.get('name') is None and\
+        if search_criteria.get('short_name') is None and\
            search_criteria.get('active') is None:
             return project_dao.get_all()
         return project_dao.search(search_criteria)
