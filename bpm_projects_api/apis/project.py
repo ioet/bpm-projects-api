@@ -46,7 +46,7 @@ class Projects(Resource):
     def get(self):
         """List projects whit filters"""
         filter_data = filter_parser.parse_args()
-        return project_dao.search_project_name_or_state(filter_data)
+        return project_dao.search_filtered_projects(filter_data)
 
     @ns.doc('create_project')
     @ns.expect(project)

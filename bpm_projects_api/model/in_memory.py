@@ -81,7 +81,7 @@ class ProjectDAO(object):
 
         return matching_projects
 
-    def search_project_name_or_state(self, search_criteria):
+    def search_filtered_projects(self, search_criteria):
         if search_criteria.get('short_name') is None and\
            search_criteria.get('active') is None:
             return self.projects

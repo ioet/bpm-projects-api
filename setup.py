@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='bpm-projects-api',
-    version='0.5-mvp',
+    version='0.0.5-mvp',
     license='Copyright 2018 ioet Inc. All Rights Reserved.',
     maintainer='BPM Developers',
     description='API for managing projects in the BPM.',
