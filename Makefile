@@ -25,13 +25,13 @@ dev:
 
 .PHONY: opa-linux
 opa-linux:
-	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("linux")) | .browser_download_url')
+	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("linux")) | .browser_download_url' || https://github.com/open-policy-agent/opa/releases/download/v0.10.1/opa_linux_amd64)
 	chmod 755 ./opa
 	@echo opa has been installed.
 
 .PHONY: opa-mac
 opa-mac:
-	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("darwin")) | .browser_download_url')
+	curl -L -o opa $(shell curl "https://api.github.com/repos/open-policy-agent/opa/releases/latest" | jq -c '.["assets"] | .[]| select(.name | contains("darwin")) | .browser_download_url' || https://github.com/open-policy-agent/opa/releases/download/v0.10.1/opa_darwin_amd64)
 	chmod 755 ./opa
 	@echo opa has been installed.
 

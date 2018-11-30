@@ -19,11 +19,10 @@ RUN pip3 install -r requirements/azure-prod.txt
 ADD . /app
 
 ENV FLASK_APP bpm_projects_api
-ENV APP_CONFIG bpm_projects_api.config.AzureDevelopmentConfig
+ENV APP_CONFIG bpm_projects_api.config.InMemoryDevelopmentConfig
 ENV FLASK_ENV production
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
-ENV DB_URI $DB_URI
 ENV OPA_SECURED True
 
 # Setup and Run the OPA policies server
