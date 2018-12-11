@@ -51,7 +51,7 @@ class ProjectDAO(ProjectDaoMongoDB):
             raise InvalidMatch("No project matched the specified criteria")
 
         return result
-    
+
     def search_filtered_projects(self, search_criteria):
         mongo_search_criteria = dict()
 
@@ -77,6 +77,7 @@ class ProjectDAO(ProjectDaoMongoDB):
         result = list(map(convert_from_db, cursor))
 
         return result
+
 
 # Instances
 project_dao = ProjectDAO()
