@@ -51,7 +51,32 @@ class ProjectDAO(ProjectDaoMongoDB):
             raise InvalidMatch("No project matched the specified criteria")
 
         return result
+    
+    def search_filtered_projects(self, search_criteria):
+        mongo_search_criteria = dict()
 
+        query_str = search_criteria.get('short_name', '')
+        if query_str:
+            query_str_content = query_str.strip()
+            if query_str_content:
+                query_str_re = re.compile(query_str_content, re.IGNORECASE)
+                mongo_search_criteria.update({
+                    '$or': [
+                        {'name': {'$regex': query_str_re}}
+                    ]
+                })
+
+        is_active = search_criteria.get('active')
+        if is_active is not None:
+            mongo_search_criteria.update({
+                'is_active': is_active,
+            })
+
+        cursor = self.collection.find(mongo_search_criteria)
+
+        result = list(map(convert_from_db, cursor))
+
+        return result
 
 # Instances
 project_dao = ProjectDAO()
