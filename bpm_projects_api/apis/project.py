@@ -43,7 +43,7 @@ class Projects(Resource):
     @ns.response(204, 'No match for your search')
     @ns.marshal_list_with(project, code=200)
     def get(self):
-        """List projects whit filters"""
+        """List projects with filters"""
         filter_data = filter_parser.parse_args()
         return project_dao.search_filtered_projects(filter_data)
 

@@ -23,7 +23,6 @@ def test_filter_shortname_return_project(client, sample_project):
     # Given
     assert sample_project
 
-
     # When
     response = client.get("/projects/?short_name=Project")
 
@@ -33,7 +32,7 @@ def test_filter_shortname_return_project(client, sample_project):
 
 
 def test_filter_active_return_projects(client, sample_project):
-    """Searching whit active filter return true"""
+    """Searching with active filter return true"""
 
     # Given
     assert sample_project
@@ -50,7 +49,7 @@ def test_filter_active_return_projects(client, sample_project):
 
 
 def test_filter_active_and_shortname_return_projects(client, sample_project):
-    """Searching whit active and Shortname return filtered projects"""
+    """Searching with active and Shortname return filtered projects"""
 
     # Given
     assert sample_project
