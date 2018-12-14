@@ -31,7 +31,7 @@ project = ns.model('Project', {
 filter_parser = ns.parser()
 filter_parser.add_argument('short_name',
                            type=query_str(3, 100),
-                           help='Name or String to search')
+                           help='Text to filter the short_name')
 filter_parser.add_argument('active', type=inputs.boolean,
                            help='Is the project active?')
 
