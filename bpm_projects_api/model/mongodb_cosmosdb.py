@@ -81,5 +81,3 @@ class ProjectDAO(ProjectDaoMongoDB):
 
 # Instances
 project_dao = ProjectDAO()
-
-
