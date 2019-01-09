@@ -1,17 +1,21 @@
-version: "3"
+version: "3.3"
 services:
-  web:
+  bpm_projects_api:
+    depends_on:
+       - bpm_projects_opa
     image: ioet/bpm-projects-api:latest
-    deploy:
-      replicas: 3
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 400M
-      restart_policy:
-        condition: on-failure
+    build: .
     ports:
-      - "8000:80"
+      - 8000:8000
+    networks:
+      - ioet-bpm-projects-subnet
+  bpm_projects_opa:
+    restart: always
+    ports:
+      - 8181:8181
+    build:
+      context: .
+      dockerfile: Dockerfile-opa
     networks:
       - ioet-bpm-projects-subnet
 networks:

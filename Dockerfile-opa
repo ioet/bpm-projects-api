@@ -1,0 +1,23 @@
+FROM ubuntu:14.04
+LABEL maintainer="ehernandez@ioet.com"
+
+RUN apt-get update --fix-missing
+RUN apt-get install make
+RUN apt-get install -y curl
+RUN apt-get install -y jq
+
+RUN mkdir -p app
+
+COPY ./Makefile /app/
+
+WORKDIR /app
+
+ENV LC_ALL C.UTF-8
+ENV LANG C.UTF-8
+
+RUN make opa-linux
+RUN make bpm-opa-directory
+
+EXPOSE 8181
+
+CMD ["make", "start-opa"]

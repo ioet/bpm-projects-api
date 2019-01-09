@@ -15,16 +15,26 @@ metadata = ns.model('Metadata', {
 
 # Project model for the API
 project = ns.model('Project', {
-    'uid': fields.String(readOnly=True, required=True, title='Identifier',
-                         description='The project generated unique id'),
-    'short_name': fields.String(required=True, title='Short name',
-                                description='Unique name in the system'),
-    'comments': fields.String(title='Comments',
-                              description='Comments about the project'),
+    'uid': fields.String(
+        eadOnly=True,
+        required=True,
+        title='Identifier',
+        description='The project generated unique id'
+    ),
+    'short_name': fields.String(
+        required=True,
+        title='Short name',
+        description='Unique name in the system'
+    ),
+    'comments': fields.String(
+        title='Comments',
+        description='Comments about the project'
+    ),
     'properties_table': fields.List(fields.Nested(metadata)),
-    'active': fields.Boolean(title='Is active?',
-                             description='Whether the project is active '
-                                         'or not')
+    'active': fields.Boolean(
+        title='Is active?',
+        description='Whether the project is active or not'
+    ),
 })
 
 

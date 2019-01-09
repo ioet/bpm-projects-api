@@ -4,6 +4,7 @@ Global fixtures
 from importlib import reload
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from flask import json
 
 from bpm_projects_api import create_app
@@ -44,7 +45,7 @@ class AuthActions:
 
 
 @pytest.fixture(scope='session', params=CONFIGURATIONS)
-def app(request):
+def app(request: FixtureRequest):
     """Create and configure a new app instance for each test."""
     app = create_app("bpm_projects_api.config.%s" % request.param)
 
@@ -90,6 +91,7 @@ def client(app):
 def user(app):
     """A test user"""
     return User(TEST_USER["name"], TEST_USER["password"])
+
 
 @pytest.fixture
 def api():
