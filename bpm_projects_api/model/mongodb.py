@@ -124,11 +124,16 @@ class ProjectDAO(object):
 
         return result
 
-    def search_project_name_or_state(self, search_criteria):
-        if search_criteria.get('short_name') is None and\
-           search_criteria.get('active') is None:
-            return project_dao.get_all()
-        return project_dao.search(search_criteria)
+    def get_filtered_projects(self, filter_criteria):
+        filter_qry = dict()
+        name_qry = {'name': {'$regex': filter_criteria.get('short_name')}, }
+        is_active_qry = {"is_active": filter_criteria.get('active')}
+        if filter_criteria.get('short_name') is not None:
+            filter_qry.update(name_qry)
+        if filter_criteria.get('active') is not None:
+            filter_qry.update(is_active_qry)
+        cursor = self.collection.find(filter_qry)
+        return list(map(convert_from_db, cursor))
 
 
 def convert_to_db(project_json):

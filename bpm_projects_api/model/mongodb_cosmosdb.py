@@ -52,6 +52,32 @@ class ProjectDAO(ProjectDaoMongoDB):
 
         return result
 
+    def get_filtered_projects(self, filter_criteria):
+        mongo_filter_criteria = dict()
+
+        query_str = filter_criteria.get('short_name', '')
+        if query_str:
+            query_str_content = query_str.strip()
+            if query_str_content:
+                query_str_re = re.compile(query_str_content, re.IGNORECASE)
+                mongo_filter_criteria.update({
+                    '$or': [
+                        {'name': {'$regex': query_str_re}}
+                    ]
+                })
+
+        is_active = filter_criteria.get('active')
+        if is_active is not None:
+            mongo_filter_criteria.update({
+                'is_active': is_active,
+            })
+
+        cursor = self.collection.find(mongo_filter_criteria)
+
+        result = list(map(convert_from_db, cursor))
+
+        return result
+
 
 # Instances
 project_dao = ProjectDAO()

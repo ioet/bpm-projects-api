@@ -142,7 +142,7 @@ def test_search_string_inactive_existing(client, sample_project, project_dao):
         'search_string': 'Project',
         'active': False
     }
-    project_id = sample_project["uid"];
+    project_id = sample_project["uid"]
     project_dao.update(project_id, {"active": False})
 
     # When

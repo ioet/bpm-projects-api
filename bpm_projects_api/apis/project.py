@@ -31,8 +31,7 @@ project = ns.model('Project', {
 filter_parser = ns.parser()
 filter_parser.add_argument('short_name',
                            type=query_str(3, 100),
-                           ignore=True,
-                           help='Name or Strign to search')
+                           help='Text to filter the short_name')
 filter_parser.add_argument('active', type=inputs.boolean,
                            help='Is the project active?')
 
@@ -44,9 +43,9 @@ class Projects(Resource):
     @ns.response(204, 'No match for your search')
     @ns.marshal_list_with(project, code=200)
     def get(self):
-        """List projects whit filters"""
+        """List projects with filters"""
         filter_data = filter_parser.parse_args()
-        return project_dao.search_project_name_or_state(filter_data)
+        return project_dao.get_filtered_projects(filter_data)
 
     @ns.doc('create_project')
     @ns.expect(project)
