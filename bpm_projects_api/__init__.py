@@ -1,8 +1,11 @@
 import os
 import sys
 
-from flask import Flask
+from flask import Flask, request
+from flask_opa import OPA
 from werkzeug.contrib.fixers import ProxyFix
+
+from bpm_projects_api.core.security import get_token
 
 
 def create_app(config_path='bpm_projects_api.config.InMemoryDevelopmentConfig',
@@ -59,6 +62,22 @@ def init_app(app):
 
     if app.config.get('FLASK_ENV') == 'production':
         sys.stdout = sys.stderr = open('bpm-projects-api.log', 'wt')
+
+    setup_opa(app)
+
+
+def setup_opa(app):
+    def parse_input():
+        token = get_token()
+        return {
+            "input": {
+                "method": request.method,
+                "path": request.path.rstrip('/').strip().split("/")[1:],
+                "user": token["sub"]
+            }
+        }
+
+    app.opa = OPA(app, input_function=parse_input)
 
 
 def add_debug_toolbar(app):

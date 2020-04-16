@@ -4,6 +4,7 @@ Global fixtures
 from importlib import reload
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from flask import json
 
 from bpm_projects_api import create_app
@@ -44,9 +45,22 @@ class AuthActions:
 
 
 @pytest.fixture(scope='session', params=CONFIGURATIONS)
-def app(request):
+def app(request: FixtureRequest):
     """Create and configure a new app instance for each test."""
     app = create_app("bpm_projects_api.config.%s" % request.param)
+
+    reload_modules_of_interest(app)
+
+    return app
+
+
+@pytest.fixture(scope='session')
+def app_with_opa():
+    config = {
+        "OPA_URL": "http://localhost:8181/v1/data/bpm/projects/allow",
+        "OPA_SECURED": True
+    }
+    app = create_app("bpm_projects_api.config.TestConfig", config_data=config)
 
     reload_modules_of_interest(app)
 

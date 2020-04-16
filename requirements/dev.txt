@@ -19,3 +19,6 @@ python-dotenv==0.9.1
 
 #For CORS
 flask-cors==3.0.6
+
+#OPA connection
+Flask-OPA==0.6

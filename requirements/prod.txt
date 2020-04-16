@@ -19,3 +19,6 @@ PyJWT==1.6.4
 
 #CLI support
 Flask-Script==2.0.6
+
+#OPA connection
+Flask-OPA==0.6

@@ -50,7 +50,6 @@ class ProjectDAO(object):
             raise MissingResource("Project '%s' not found" % uid)
 
     def create(self, project_data):
-        project_data['uid'] = None
         new_project = convert_to_db(project_data)
 
         result = self.collection.insert_one(new_project)

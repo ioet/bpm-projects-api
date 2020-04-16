@@ -10,9 +10,9 @@ def test_search_nothing(client, auth_token):
 
     # When
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria,
-                           follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria,
+                          follow_redirects=True)
 
     # Then
     assert 400 == response.status_code
@@ -24,8 +24,8 @@ def test_search_existing_string(client, auth_token, sample_project):
     assert sample_project
     # When
     response = client.get("/projects/search/?search_string=Project",
-                           headers={'token': auth_token},
-                           follow_redirects=True)
+                          headers={'token': auth_token},
+                          follow_redirects=True)
 
     # Then
     assert 200 == response.status_code
@@ -39,8 +39,8 @@ def test_search_non_existing_string(client, auth_token, sample_project):
 
     # When
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria, follow_redirects=True)
 
     # Then
     assert 204 == response.status_code
@@ -55,8 +55,8 @@ def test_search_active_existing(client, auth_token, sample_project):
 
     # When
     response = client.get("/projects/search/?active=true",
-                           headers={'token': auth_token},
-                           follow_redirects=True)
+                          headers={'token': auth_token},
+                          follow_redirects=True)
 
     # Then
     assert json.loads(response.data)[0]['uid'] == sample_project['uid']
@@ -71,8 +71,8 @@ def test_search_active_non_existing(client, auth_token):
     }
 
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria, follow_redirects=True)
 
     assert 204 == response.status_code
 
@@ -87,8 +87,8 @@ def test_search_existing_inactive(client, auth_token, sample_project, another_pr
 
     # When
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria, follow_redirects=True)
 
     # Then
     response_json = json.loads(response.data)
@@ -121,8 +121,8 @@ def test_search_string_existing_active(client, auth_token, sample_project):
 
     # When
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria, follow_redirects=True)
 
     # Then
     assert json.loads(response.data)[0]['uid'] == sample_project['uid']
@@ -138,8 +138,8 @@ def test_search_string_non_existing_active(client, auth_token):
     }
 
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria, follow_redirects=True)
 
     assert 204 == response.status_code
 
@@ -156,8 +156,8 @@ def test_search_string_inactive_existing(client, auth_token, sample_project, pro
 
     # When
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria, follow_redirects=True)
 
     # Then
     assert json.loads(response.data)[0]['uid'] == project_id
@@ -174,7 +174,7 @@ def test_search_string_non_existing_inactive(client, auth_token):
     }
 
     response = client.get("/projects/search/",
-                           headers={'token': auth_token},
-                           json=search_criteria, follow_redirects=True)
+                          headers={'token': auth_token},
+                          json=search_criteria, follow_redirects=True)
 
     assert 204 == response.status_code

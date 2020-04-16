@@ -14,6 +14,7 @@ setup(
         'flask_restplus>=0.11.0',
         'Flask-Script>=2.0.6',
         'PyJWT',
+        "Flask-OPA>0.6"
     ],
     extras_require={
         'test': [
